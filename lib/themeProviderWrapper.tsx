@@ -1,0 +1,31 @@
+'use client';
+
+import { ThemeProvider } from 'styled-components';
+import { ReactNode } from 'react';
+import getTheme from './utils';
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+    * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: ${({ theme }) => theme.colors.background};
+    }
+`;
+
+export default function ThemeProviderWrapper({
+    children,
+}: {
+    children: ReactNode;
+}) {
+    const theme = getTheme();
+    return <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        {children}
+    </ThemeProvider>;
+}
