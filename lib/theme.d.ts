@@ -6,6 +6,8 @@ declare module 'styled-components' {
             primary: string;
             secondary: string;
             background: string;
+            labelColor: string;
+            errorLabelColor: string;
         };
     }
 }

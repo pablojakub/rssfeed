@@ -15,3 +15,7 @@ export type RSSFeedState = {
     state: 'ERROR',
     error: string;
 }
+
+export const isRSSFeedResponse = (response: unknown): response is { items: RSSItem[] } => {
+    return (response as { items: RSSItem[] }).items !== undefined;
+}
