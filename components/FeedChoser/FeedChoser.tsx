@@ -1,174 +1,19 @@
 'use client'
-
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-
-const Container = styled.div`
-  width: 550px;
-  position: relative;
-  font-family: sans-serif;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-`;
-
-const ChipsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-`;
-
-const Chip = styled.div<{ backgroundcolor: string }>`
-  background: ${({ backgroundcolor }) => backgroundcolor};
-  color: black;
-  padding: 8px 12px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-`;
-
-const RemoveButton = styled.span`
-  margin-left: 8px;
-  cursor: pointer;
-  font-weight: bold;
-`;
-
-const Dropdown = styled.ul`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 150px;
-  background: white;
-  border: 1px solid #ccc;
-  border-top: none;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 2px 0 0;
-  z-index: 10;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-`;
-
-const DropdownItem = styled.li`
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  &:hover {
-    background: #f9f9f9;
-  }
-`;
-
-const DropdownText = styled.span`
-  flex: 1;
-`;
-
-const DropdownRemove = styled.span`
-  margin-left: 10px;
-  color: #999;
-  cursor: pointer;
-  font-weight: bold;
-  &:hover {
-    color: red;
-  }
-`;
-
-const DropdownLabel = styled.label`
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 10px;
-  color: ${({ theme }) => theme.colors.labelColor};
-`;
-
-const Label = styled.label`
-  font-size: 1rem;
-  font-weight: 600;
-  width: 100%;
-  diplay: block;
-  margin-inline: auto;
-  margin-bottom: 8px;
-  color: ${({ theme }) => theme.colors.labelColor};
-`;
-
-const ErrorLabel = styled.label`
-  font-size: 0.8rem;
-  font-weight: 500;
-  margin-bottom: 6px;
-  margin-inline: auto;
-  display: block;
-  width: 100%;
-  color: ${({ theme }) => theme.colors.errorLabelColor};
-`;
-
-export const StyledFeedChoserWrapper = styled.div`
-    display: flex;
-    gap: 8px;
-    flex-direction: column;
-`
-
-const extractChips = (url: string) => {
-    try {
-        const urlToAdd = new URL(url);
-        const hostName = urlToAdd.hostname;
-        const pathName = urlToAdd.pathname;
-        return `${hostName}${pathName}`;
-    } catch (e) {
-        return null;
-    }
-};
-
-const getRandomColor = () => {
-    const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 70%, 85%)`;
-};
-
-function getInitialValueFromLocalStore<T>(localStoreKey: string): T {
-    if (typeof window !== 'undefined') {
-        const localStorageValue = localStorage.getItem(localStoreKey);
-        if (localStorageValue) {
-            return JSON.parse(localStorageValue) as T;
-        }
-        return [] as T;
-    }
-    return [] as T;
-}
-
-function setValueToLocalStore<T>(localStoreKey: string, value: T) {
-    if (typeof window !== 'undefined') {
-        localStorage.setItem(localStoreKey, JSON.stringify(value));
-    }
-}
-
-export type Chip = {
-    label: string;
-    color: string;
-}
-
-export type FeedElement = {
-    url: string;
-}
+import React, { useState, useRef } from 'react';
+import { Chip, ChipsContainer, Container, Dropdown, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, RemoveButton, StyledFeedChoserWrapper } from './FeedChoser.styled';
+import { ChipObj, FeedChoserProps, FeedElement } from './FeedChoser.types';
+import { extractChips, getRandomColor } from './FeedChoser.utils';
+import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
 
-const FeedChoser = () => {
+const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
-    const [chips, setChips] = useState<Chip[]>(getInitialValueFromLocalStore<Chip[]>(STORED_CHIPS_KEY));
+    const [chips, setChips] = useState<ChipObj[]>(props.initialSubscriptions);
     const [error, setError] = useState<string | null>(null);
     const [feedElements, setFeedElements] = useState<FeedElement[]>(getInitialValueFromLocalStore<FeedElement[]>(STORED_FEEDS_KEY));
     const [showDropdown, setShowDropdown] = useState(false);
-    const [isClient, setIsClient] = useState(false);
     const inputRef = useRef(null);
 
     const handleAddUrl = (url: string) => {
@@ -178,7 +23,8 @@ const FeedChoser = () => {
             localStorage.setItem('storedChips', JSON.stringify(chips));
             setChips((prev) => {
                 const newChips = [...prev, { label: url, color: getRandomColor() }]
-                setValueToLocalStore<Chip[]>(STORED_CHIPS_KEY, newChips);
+                setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
+                props.onSubscriptionChage(newChips);
                 return newChips
             });
             setFeedElements((prev) => {
@@ -209,6 +55,7 @@ const FeedChoser = () => {
         setChips((prev) => {
             const newChips = prev.filter((chip) => chip.label !== urlToRemove);
             setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+            props.onSubscriptionChage(newChips);
             return newChips;
         });
     };
@@ -217,6 +64,7 @@ const FeedChoser = () => {
         setChips((prev) => {
             const newChips = prev.filter((chip) => chip.label !== urlToRemove);
             setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+            props.onSubscriptionChage(newChips);
             return newChips;
         });
         setFeedElements((prev) => {
@@ -232,19 +80,16 @@ const FeedChoser = () => {
             setChips((prev) => {
                 const newChips = [...prev, { label: url, color: getRandomColor() }];
                 setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+                props.onSubscriptionChage(newChips);
                 return newChips;
             });
         }
     };
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
     return (
         <StyledFeedChoserWrapper>
             <Container>
-                <Label htmlFor="feed-input">Your RSS Feeds:</Label>
+                <Label htmlFor="feed-input">RSS Feeds:</Label>
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
@@ -271,7 +116,6 @@ const FeedChoser = () => {
                         ))}
                     </Dropdown>
                 )}
-
             </Container>
             <Container>
                 <Label>Your subscriptions:</Label>

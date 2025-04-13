@@ -8,6 +8,7 @@ declare module 'styled-components' {
             background: string;
             labelColor: string;
             errorLabelColor: string;
+            scrollBarColor: string;
         };
     }
 }

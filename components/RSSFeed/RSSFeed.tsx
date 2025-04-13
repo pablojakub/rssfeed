@@ -1,59 +1,62 @@
 'use client'
+import { useState } from 'react';
+import { ArticleSummaryWrapper, SkeletonLoader, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
+import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
+import { useQuery } from '@tanstack/react-query';
+import { ErrorLabel } from '../FeedChoser/FeedChoser.styled';
+import { getFeedArticlesByFeedUrls } from './RSSFeed.utils';
+import { getInitialValueFromLocalStore } from '../utils';
+import ArticleSummary from '../ArticleSummary/ArticleSummary';
+import { Tooltip } from 'react-tooltip';
 
-import { useEffect, useState } from 'react';
-import { interval, switchMap, catchError, of, from, startWith, Observable, Subscription } from 'rxjs';
-import { isRSSFeedResponse, RSSFeedState, RSSItem } from './RSSFeed.types';
-import { StyledHeader, StyledRssWrapper } from './RSSFeed.styled';
-import FeedChoser from '../FeedChoser/FeedChoser';
+const RSSFeed = () => {
+    const [subscriptions, setSubscriptions] = useState<Subscription[]>(getInitialValueFromLocalStore<Subscription[]>(STORED_CHIPS_KEY));
 
-const RSS_URL = 'https://cors-anywhere.herokuapp.com/https://techcrunch.com/feed/';
-
-const RssFeed = () => {
-    const [RssFeedState, setRssFeedState] = useState<RSSFeedState>({
-        state: 'LOADING',
-        items: [],
-    });
-    console.log('🚀 ~ RssFeed ~ RssFeedState:', RssFeedState);
-
-    useEffect(() => {
-        const subscription: Subscription = interval(60000).pipe(
-            startWith(0),
-            switchMap(() =>
-                from(fetch('/api/rss', { method: 'POST', body: JSON.stringify(['abc']) }))
-                    .pipe(
-                        switchMap((response: Response) => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok')
-                            }
-                            return from(response.json()) as Observable<{ items: RSSItem[] }>;
-                        }),
-                        catchError((error: Error) => of({ error: error.message }))
-                    )
-            )
-        ).subscribe({
-            next: (data) => {
-                if (isRSSFeedResponse(data)) {
-                    setRssFeedState({ state: 'READY', items: data.items });
-                    return;
-                }
-                throw new Error('Invalid response format');
-            },
-            error: (err: Error) => {
-                setRssFeedState({ state: 'ERROR', error: err.message });
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
+    const feedQuery = useQuery({
+        queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],
+        queryFn: () => getFeedArticlesByFeedUrls(subscriptions),
+        refetchInterval: 60000,
+        refetchOnWindowFocus: false,
+        enabled: subscriptions.length > 0,
+    })
 
     return (
         <StyledRssWrapper>
-            <StyledHeader>Your RSS Feed</StyledHeader>
-            <FeedChoser />
-            {RssFeedState.state === 'ERROR' && <div>Error: {RssFeedState.error}</div>}
-            {RssFeedState.state === 'LOADING' && <div>Loading...</div>}
+            <StyledTitleHeaderWrapper>
+                <StyledHeader>RSS Feed Reader</StyledHeader>
+            </StyledTitleHeaderWrapper>
+            <FeedChoser
+                initialSubscriptions={subscriptions}
+                onSubscriptionChage={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
+            />
+            <ArticleSummaryWrapper>
+                {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
+                {feedQuery.isFetching && Array.from(Array(5), (_, index) => (
+                    <SkeletonLoader key={`loader_${index}`} />
+                ))}
+                {feedQuery.data &&
+                    feedQuery.data.map((article) => (
+                        <ArticleSummary
+                            key={article.guid}
+                            article={article}
+                        />
+                    ))
+                }
+                <Tooltip
+                    id='bookmark-info'
+                    style={{
+                        position: 'absolute',
+                        color: 'black',
+                        boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
+                        borderRadius: '5px',
+                        padding: '0.5rem',
+                        zIndex: 2,
+                    }}
+                />
+            </ArticleSummaryWrapper>
         </StyledRssWrapper>
     );
 };
 
-export default RssFeed;
+export default RSSFeed;

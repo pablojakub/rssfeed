@@ -7,6 +7,7 @@ const getTheme = () => ({
         background: 'hsl(0, 0%, 96%)',
         labelColor: '#333',
         errorLabelColor: 'red',
+        scrollBarColor: 'hsl(220, 14%, 58%)',
     },
 } as DefaultTheme);
 

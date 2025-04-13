@@ -1,21 +1,9 @@
-export type RSSItem = {
+export type FeedDTO = {
+    creator: string;
     title: string;
-    link: string;
     pubDate: string;
-    description: string;
-}
-
-export type RSSFeedState = {
-    state: 'READY',
-    items: RSSItem[];
-} | {
-    state: 'LOADING',
-    items: [];
-} | {
-    state: 'ERROR',
-    error: string;
-}
-
-export const isRSSFeedResponse = (response: unknown): response is { items: RSSItem[] } => {
-    return (response as { items: RSSItem[] }).items !== undefined;
+    contentSnippet: string;
+    link: string;
+    guid: string;
+    [key: string]: string;
 }

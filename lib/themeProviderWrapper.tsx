@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import { ReactNode } from 'react';
 import getTheme from './utils';
 import { createGlobalStyle } from "styled-components";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const GlobalStyle = createGlobalStyle`
     * {
@@ -18,6 +19,8 @@ const GlobalStyle = createGlobalStyle`
     }
 `;
 
+const queryClient = new QueryClient();
+
 export default function ThemeProviderWrapper({
     children,
 }: {
@@ -25,7 +28,10 @@ export default function ThemeProviderWrapper({
 }) {
     const theme = getTheme();
     return <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        {children}
+        <QueryClientProvider client={queryClient}>
+            <GlobalStyle />
+            {children}
+        </QueryClientProvider>
+
     </ThemeProvider>;
 }
