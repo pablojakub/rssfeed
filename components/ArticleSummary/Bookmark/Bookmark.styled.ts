@@ -2,6 +2,6 @@ import styled from "styled-components";
 
 export const StyledIconWrapper = styled.div`
     float: right;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
 `
