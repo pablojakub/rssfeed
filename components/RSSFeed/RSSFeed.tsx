@@ -9,9 +9,13 @@ import { getFeedArticlesByFeedUrls } from './RSSFeed.utils';
 import { getInitialValueFromLocalStore } from '../utils';
 import ArticleSummary from '../ArticleSummary/ArticleSummary';
 import { Tooltip } from 'react-tooltip';
+import { FeedDTO } from './RSSFeed.types';
+
+const FAVOURITE_ARTICLES_KEY = 'favourite_articles';
 
 const RSSFeed = () => {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>(getInitialValueFromLocalStore<Subscription[]>(STORED_CHIPS_KEY));
+    const [favourites, setFavourites] = useState<FeedDTO[]>(getInitialValueFromLocalStore<FeedDTO[]>(FAVOURITE_ARTICLES_KEY));
 
     const feedQuery = useQuery({
         queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],
@@ -24,15 +28,15 @@ const RSSFeed = () => {
     return (
         <StyledRssWrapper>
             <StyledTitleHeaderWrapper>
-                <StyledHeader>RSS Feed Reader</StyledHeader>
+                <StyledHeader>RSS Feed Reader 📖</StyledHeader>
             </StyledTitleHeaderWrapper>
             <FeedChoser
                 initialSubscriptions={subscriptions}
-                onSubscriptionChage={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
+                onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
             />
             <ArticleSummaryWrapper>
                 {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
-                {feedQuery.isFetching && Array.from(Array(5), (_, index) => (
+                {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
                     <SkeletonLoader key={`loader_${index}`} />
                 ))}
                 {feedQuery.data &&

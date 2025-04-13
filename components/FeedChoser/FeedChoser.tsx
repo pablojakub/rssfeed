@@ -10,7 +10,6 @@ export const STORED_FEEDS_KEY = 'storedFeeds';
 
 const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
-    const [chips, setChips] = useState<ChipObj[]>(props.initialSubscriptions);
     const [error, setError] = useState<string | null>(null);
     const [feedElements, setFeedElements] = useState<FeedElement[]>(getInitialValueFromLocalStore<FeedElement[]>(STORED_FEEDS_KEY));
     const [showDropdown, setShowDropdown] = useState(false);
@@ -19,14 +18,10 @@ const FeedChoser = (props: FeedChoserProps) => {
     const handleAddUrl = (url: string) => {
         const domain = extractChips(url);
         setError(null);
-        if (domain && !chips.find((chip) => chip.label === url)) {
-            localStorage.setItem('storedChips', JSON.stringify(chips));
-            setChips((prev) => {
-                const newChips = [...prev, { label: url, color: getRandomColor() }]
-                setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
-                props.onSubscriptionChage(newChips);
-                return newChips
-            });
+        if (domain && !props.initialSubscriptions.find((chip) => chip.label === url)) {
+            const newChips = [...props.initialSubscriptions, { label: url, color: getRandomColor() }]
+            setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
+            props.onSubscriptionChange(newChips);
             setFeedElements((prev) => {
                 const newFeeds = [...prev, { url }]
                 setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, newFeeds);
@@ -35,7 +30,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             setInputValue('');
             return;
         }
-        if (chips.find((chip) => chip.label === url)) {
+        if (props.initialSubscriptions.find((chip) => chip.label === url)) {
             setError('Feed already exist');
             setInputValue('');
             return;
@@ -52,21 +47,15 @@ const FeedChoser = (props: FeedChoserProps) => {
     };
 
     const handleDelete = (urlToRemove: string) => {
-        setChips((prev) => {
-            const newChips = prev.filter((chip) => chip.label !== urlToRemove);
-            setValueToLocalStore(STORED_CHIPS_KEY, newChips);
-            props.onSubscriptionChage(newChips);
-            return newChips;
-        });
+        const newChips = props.initialSubscriptions.filter((chip) => chip.label !== urlToRemove);
+        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+        props.onSubscriptionChange(newChips);
     };
 
     const handleDeleteFromDropdown = (urlToRemove: string) => {
-        setChips((prev) => {
-            const newChips = prev.filter((chip) => chip.label !== urlToRemove);
-            setValueToLocalStore(STORED_CHIPS_KEY, newChips);
-            props.onSubscriptionChage(newChips);
-            return newChips;
-        });
+        const newChips = props.initialSubscriptions.filter((chip) => chip.label !== urlToRemove);
+        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+        props.onSubscriptionChange(newChips);
         setFeedElements((prev) => {
             const newFeeds = prev.filter((feed) => feed.url !== urlToRemove);
             setValueToLocalStore(STORED_FEEDS_KEY, newFeeds);
@@ -76,13 +65,10 @@ const FeedChoser = (props: FeedChoserProps) => {
     };
 
     const handleDropdownClick = (url: string) => {
-        if (!chips.find((chip) => chip.label === url)) {
-            setChips((prev) => {
-                const newChips = [...prev, { label: url, color: getRandomColor() }];
-                setValueToLocalStore(STORED_CHIPS_KEY, newChips);
-                props.onSubscriptionChage(newChips);
-                return newChips;
-            });
+        if (!props.initialSubscriptions.find((chip) => chip.label === url)) {
+            const newChips = [...props.initialSubscriptions, { label: url, color: getRandomColor() }];
+            setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+            props.onSubscriptionChange(newChips);
         }
     };
 
@@ -105,7 +91,10 @@ const FeedChoser = (props: FeedChoserProps) => {
                     <Dropdown>
                         <DropdownLabel>Choose to which subscribe:</DropdownLabel>
                         {feedElements.map((feedElement, idx) => (
-                            <DropdownItem key={idx}>
+                            <DropdownItem
+                                key={idx}
+                                isdisabled={props.initialSubscriptions.some((chip) => chip.label === feedElement.url) ? 'true' : 'false'}
+                            >
                                 <DropdownText onClick={() => handleDropdownClick(feedElement.url)}>
                                     {feedElement.url}
                                 </DropdownText>
@@ -120,7 +109,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             <Container>
                 <Label>Your subscriptions:</Label>
                 <ChipsContainer>
-                    {chips.map((chip, idx) => (
+                    {props.initialSubscriptions.map((chip, idx) => (
                         <Chip
                             key={idx}
                             backgroundcolor={chip.color}

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Container = styled.div`
   position: relative;
@@ -60,7 +60,7 @@ export const Dropdown = styled.ul`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 `;
 
-export const DropdownItem = styled.li`
+export const DropdownItem = styled.li<{ isdisabled: string }>`
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -69,6 +69,14 @@ export const DropdownItem = styled.li`
   &:hover {
     background: #f9f9f9;
   }
+
+  ${({ isdisabled, theme }) => isdisabled === 'true' && css`
+    cursor: not-allowed;
+
+    & > span {
+      color: ${theme.colors.secondary};
+    }
+  `}
 `;
 
 export const DropdownText = styled.span`

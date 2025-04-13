@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import { FeedDTO } from '../RSSFeed/RSSFeed.types';
 import Bookmark from './Bookmark/Bookmark';
+import { format } from 'date-fns';
 
 export const StyledArticleSummaryWrapper = styled.div`
     border-radius: 5px;
@@ -27,6 +28,13 @@ export const ArticleHeader = styled.h2`
     margin: 0;
     font-size: 1.2rem;
     font-weight: 600;
+    color: black;
+`;
+
+export const ArticleBibliography = styled.p`
+    font-size: .8rem;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.secondary};
 `;
 
 export type ArticleSummaryProps = {
@@ -38,6 +46,7 @@ const ArticleSummary = (props: ArticleSummaryProps) => {
         <StyledArticleSummaryWrapper>
             <Bookmark isChecked={false} />
             <ArticleHeader>{props.article.title}</ArticleHeader>
+            <ArticleBibliography>Published: {format(new Date(props.article.pubDate), 'yyyy-MM-dd')} | Author: {props.article.creator}</ArticleBibliography>
         </StyledArticleSummaryWrapper>
     );
 };
