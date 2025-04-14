@@ -57,7 +57,7 @@ const RSSFeed = () => {
                 />
                 <FilterWrapper>
                     <Label>
-                        Only favourite articles:
+                        Show only favourite articles:
                     </Label>
                     <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
                         {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}

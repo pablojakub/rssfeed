@@ -13,8 +13,9 @@ const StyledOverlay = styled.div`
 export const StyledModalWrapper = styled.div`
     position: fixed;
     padding: 8px 16px;
-    width: 900px;
-    height: 900px;
+    max-width: 500px;
+     width: 100%;
+    max-height: 90vh;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -32,12 +33,12 @@ export const StyledCloseBtn = styled.div`
 
 export const Content = styled.div`
     text-align: center;
-    max-height: 800px;
+    max-height: 75vh;
     overflow: auto;
 
     figure {
         text-align: center;
-        max-width: 880px;
+        max-width: 460px;
         margin-block: 8px;
     }
 
@@ -108,13 +109,13 @@ const ArticleDetails = (props: ArticleDetailsProps) => {
                         />
                     ) : (
                         <>
-                            <StyledContentInfo>
-                                There is no full content preview. You can read preview or go to the link at the top 🔝
-                            </StyledContentInfo>
                             <MarkdownView
                                 markdown={articleSummary}
                                 options={{ tables: true, emoji: true, disableForced4SpacesIndentedSublists: true }}
                             />
+                            <StyledContentInfo>
+                                This is not full content. You can read whole article by following link at the top 🔝
+                            </StyledContentInfo>
                         </>
 
                     )}
