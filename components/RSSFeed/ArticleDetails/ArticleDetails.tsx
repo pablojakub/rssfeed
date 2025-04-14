@@ -33,7 +33,7 @@ export const StyledCloseBtn = styled.div`
 
 export const Content = styled.div`
     text-align: center;
-    max-height: 65vh;
+    max-height: 55vh;
     overflow: auto;
 
     figure {
