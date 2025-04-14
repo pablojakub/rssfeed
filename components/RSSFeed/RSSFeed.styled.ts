@@ -45,7 +45,7 @@ export const ArticleSummaryWrapper = styled.div`
     grid-column: breakout;
     height: 65vh;
     display: grid;
-    grid-auto-rows: 22%;
+    grid-auto-rows: 130px;
     gap: 8px;
     overflow-y: auto;
     scrollbar-gutter: stable;
@@ -79,17 +79,14 @@ export const ArticleSummaryWrapper = styled.div`
     }
 
      @media (max-width: ${BREAKPOINTS.LAPTOP}) {
-        grid-auto-rows: 32%;
         height: 57vh;
     }
 
      @media (max-width: ${BREAKPOINTS.TABLET}) {
-        grid-auto-rows: 18%;
         height: 70vh;
     }
     
     @media (max-width: ${BREAKPOINTS.MOBILE}) {
-        grid-auto-rows: 28%;
         height: 57vh;
     }
 `;
