@@ -87,7 +87,7 @@ export const ArticleSummaryWrapper = styled.div`
     }
     
     @media (max-width: ${BREAKPOINTS.MOBILE}) {
-        height: 57vh;
+        height: auto;
     }
 `;
 
