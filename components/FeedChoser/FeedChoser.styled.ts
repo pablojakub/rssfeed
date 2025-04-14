@@ -104,10 +104,7 @@ export const DropdownLabel = styled.label`
 export const Label = styled.label`
   font-size: 1rem;
   font-weight: 600;
-  width: 100%;
   diplay: block;
-  margin-inline: auto;
-  margin-bottom: 8px;
   color: ${({ theme }) => theme.colors.labelColor};
 `;
 
@@ -126,4 +123,4 @@ export const StyledFeedChoserWrapper = styled.div`
     gap: 8px;
     flex-direction: column;
     grid-column: content;
-`
+`;

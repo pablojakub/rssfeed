@@ -8,6 +8,6 @@ export type FeedElement = {
 }
 
 export type FeedChoserProps = {
-    initialSubscriptions: ChipObj[],
+    subscriptions: ChipObj[],
     onSubscriptionChange: (subscriptions: ChipObj[]) => void;
 }

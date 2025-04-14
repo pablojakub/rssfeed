@@ -1,21 +1,23 @@
 'use client'
 import { useState } from 'react';
-import { ArticleSummaryWrapper, SkeletonLoader, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import { ArticleSummaryWrapper, FilterWrapper, LabelWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
 import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
-import { ErrorLabel } from '../FeedChoser/FeedChoser.styled';
+import { ErrorLabel, Label } from '../FeedChoser/FeedChoser.styled';
 import { getFeedArticlesByFeedUrls } from './RSSFeed.utils';
-import { getInitialValueFromLocalStore } from '../utils';
+import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 import ArticleSummary from '../ArticleSummary/ArticleSummary';
 import { Tooltip } from 'react-tooltip';
 import { FeedDTO } from './RSSFeed.types';
+import { FilledStar, OutlineStar } from '../ArticleSummary/Bookmark/Bookmark';
 
 const FAVOURITE_ARTICLES_KEY = 'favourite_articles';
 
 const RSSFeed = () => {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>(getInitialValueFromLocalStore<Subscription[]>(STORED_CHIPS_KEY));
     const [favourites, setFavourites] = useState<FeedDTO[]>(getInitialValueFromLocalStore<FeedDTO[]>(FAVOURITE_ARTICLES_KEY));
+    const [showOnlyFavourite, setShowOnlyFavourite] = useState(false);
 
     const feedQuery = useQuery({
         queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],
@@ -23,7 +25,23 @@ const RSSFeed = () => {
         refetchInterval: 60000,
         refetchOnWindowFocus: false,
         enabled: subscriptions.length > 0,
-    })
+    });
+
+    const handleToggleFavourite = (favouriteArticle: FeedDTO, isChecked: boolean) => {
+        if (isChecked) {
+            setFavourites((prev) => {
+                const newFavourites = [...prev, favouriteArticle];
+                setValueToLocalStore(FAVOURITE_ARTICLES_KEY, newFavourites);
+                return newFavourites;
+            })
+        } else {
+            setFavourites((prev) => {
+                const newFavourites = prev.filter((fav) => fav.guid !== favouriteArticle.guid);
+                setValueToLocalStore(FAVOURITE_ARTICLES_KEY, newFavourites);
+                return newFavourites;
+            })
+        }
+    }
 
     return (
         <StyledRssWrapper>
@@ -31,22 +49,42 @@ const RSSFeed = () => {
                 <StyledHeader>RSS Feed Reader 📖</StyledHeader>
             </StyledTitleHeaderWrapper>
             <FeedChoser
-                initialSubscriptions={subscriptions}
+                subscriptions={subscriptions}
                 onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
             />
+            <FilterWrapper>
+                <Label>
+                    Only favourite articles:
+                </Label>
+                <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
+                    {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
+                </StarWrapper>
+            </FilterWrapper>
             <ArticleSummaryWrapper>
                 {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
                 {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
                     <SkeletonLoader key={`loader_${index}`} />
                 ))}
-                {feedQuery.data &&
+                {feedQuery.data && showOnlyFavourite === false &&
                     feedQuery.data.map((article) => (
                         <ArticleSummary
                             key={article.guid}
                             article={article}
+                            toggleAddToFavourite={handleToggleFavourite}
+                            isFavourite={favourites.some((fav) => fav.guid === article.guid)}
                         />
                     ))
                 }
+                {showOnlyFavourite && (
+                    favourites.map((fav) => (
+                        <ArticleSummary
+                            key={fav.guid}
+                            article={fav}
+                            toggleAddToFavourite={handleToggleFavourite}
+                            isFavourite={favourites.some((fav) => fav.guid === fav.guid)}
+                        />
+                    ))
+                )}
                 <Tooltip
                     id='bookmark-info'
                     style={{

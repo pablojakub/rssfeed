@@ -1,0 +1,74 @@
+@use 'sass:math';
+
+.Confetti {
+    position: absolute;
+    inset: 50%;
+    transform-style: preserve-3d;
+    opacity: 0;
+}
+
+@function halfNegative($value, $units) {
+    @return calc($value / 2) - math.random(math.div($value, $units))
+}
+
+.Confetti>span {
+    $horizontal-max: 70vw;
+    $vertical-max: 45vh;
+    $base-hue: 1;
+    $hue-variation: 100;
+    $max-width: 20px;
+    $min-width: 5px;
+    $shape: .5; // 0 === circles, 0.5 === mix; 1== squares;
+    $max-depth: 500px;
+    $max-spin: 10;
+
+    position: absolute;
+    width: max(var(--confetti-size), $min-width);
+    aspect-ratio: 1;
+    background-color: hsl(var(--hue) 100% 50%);
+    border-radius: var(--shape);
+
+    @for $i from 1 through 50 {
+        &:nth-child(#{$i}) {
+            --offsetY: #{halfNegative($vertical-max, 1vh)};
+            --offsetX: #{halfNegative($horizontal-max, 1vw)};
+            --offsetZ: #{halfNegative($max-depth, 1vw)};
+            --hue: #{$base-hue + halfNegative($hue-variation, 1)};
+            --confetti-size: #{math.random($max-width)}px;
+            --shape: #{(math.random() - $shape) * 100vw};
+            --spin: #{(math.random($max-spin))}turn;
+        }
+    }
+}
+
+.Explosion {
+    animation: confettiSettle 5s;
+}
+
+.Explosion>span {
+    animation: confettiSpread 5s cubic-bezier(0, 0.8, 1, 1);
+}
+
+@keyframes confettiSpread {
+    25% {
+        translate: 0 -25vh;
+    }
+
+    100% {
+        translate: 0 -25vh;
+        transform: translateY(var(--offsetY)) translateZ(var(--offsetZ)) translateX(var(--offsetX)) rotateX(var(--spin));
+    }
+}
+
+@keyframes confettiSettle {
+
+    0%,
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(50vh);
+    }
+}
