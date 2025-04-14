@@ -25,7 +25,11 @@ const ArticleSummary = (props: ArticleSummaryProps) => {
                 <ArticleHeader>{props.article.title}</ArticleHeader>
                 <ArticleBibliography>Published: {format(new Date(props.article.pubDate), 'yyyy-MM-dd')} | Author: {props.article.creator}</ArticleBibliography>
                 <ArticleContent>{props.article.contentSnippet}</ArticleContent>
-                <ReadMoreButtonWrapper>
+                <ReadMoreButtonWrapper
+                    onClick={() => {
+                        props.onShowDetails(props.article);
+                    }}
+                >
                     <ReadMoreButton>Read more</ReadMoreButton>
                 </ReadMoreButtonWrapper>
             </StyledArticleSummaryWrapper>

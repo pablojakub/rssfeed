@@ -11,6 +11,7 @@ import ArticleSummary from '../ArticleSummary/ArticleSummary';
 import { Tooltip } from 'react-tooltip';
 import { FeedDTO } from './RSSFeed.types';
 import { FilledStar, OutlineStar } from '../ArticleSummary/Bookmark/Bookmark';
+import ArticleDetails from './ArticleDetails/ArticleDetails';
 
 const FAVOURITE_ARTICLES_KEY = 'favourite_articles';
 
@@ -18,6 +19,7 @@ const RSSFeed = () => {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>(getInitialValueFromLocalStore<Subscription[]>(STORED_CHIPS_KEY));
     const [favourites, setFavourites] = useState<FeedDTO[]>(getInitialValueFromLocalStore<FeedDTO[]>(FAVOURITE_ARTICLES_KEY));
     const [showOnlyFavourite, setShowOnlyFavourite] = useState(false);
+    const [detailsArticle, setDetailsArticle] = useState<FeedDTO | null>(null);
 
     const feedQuery = useQuery({
         queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],
@@ -44,60 +46,75 @@ const RSSFeed = () => {
     }
 
     return (
-        <StyledRssWrapper>
-            <StyledTitleHeaderWrapper>
-                <StyledHeader>RSS Feed Reader 📖</StyledHeader>
-            </StyledTitleHeaderWrapper>
-            <FeedChoser
-                subscriptions={subscriptions}
-                onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
-            />
-            <FilterWrapper>
-                <Label>
-                    Only favourite articles:
-                </Label>
-                <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
-                    {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
-                </StarWrapper>
-            </FilterWrapper>
-            <ArticleSummaryWrapper>
-                {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
-                {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
-                    <SkeletonLoader key={`loader_${index}`} />
-                ))}
-                {feedQuery.data && showOnlyFavourite === false &&
-                    feedQuery.data.map((article) => (
-                        <ArticleSummary
-                            key={article.guid}
-                            article={article}
-                            toggleAddToFavourite={handleToggleFavourite}
-                            isFavourite={favourites.some((fav) => fav.guid === article.guid)}
-                        />
-                    ))
-                }
-                {showOnlyFavourite && (
-                    favourites.map((fav) => (
-                        <ArticleSummary
-                            key={fav.guid}
-                            article={fav}
-                            toggleAddToFavourite={handleToggleFavourite}
-                            isFavourite={favourites.some((fav) => fav.guid === fav.guid)}
-                        />
-                    ))
-                )}
-                <Tooltip
-                    id='bookmark-info'
-                    style={{
-                        position: 'absolute',
-                        color: 'black',
-                        boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
-                        borderRadius: '5px',
-                        padding: '0.5rem',
-                        zIndex: 2,
-                    }}
+        <>
+            <StyledRssWrapper>
+                <StyledTitleHeaderWrapper>
+                    <StyledHeader>RSS Feed Reader 📖</StyledHeader>
+                </StyledTitleHeaderWrapper>
+                <FeedChoser
+                    subscriptions={subscriptions}
+                    onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
                 />
-            </ArticleSummaryWrapper>
-        </StyledRssWrapper>
+                <FilterWrapper>
+                    <Label>
+                        Only favourite articles:
+                    </Label>
+                    <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
+                        {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
+                    </StarWrapper>
+                </FilterWrapper>
+                <ArticleSummaryWrapper>
+                    {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
+                    {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
+                        <SkeletonLoader key={`loader_${index}`} />
+                    ))}
+                    {feedQuery.data && showOnlyFavourite === false &&
+                        feedQuery.data.map((article) => (
+                            <ArticleSummary
+                                key={article.guid}
+                                article={article}
+                                toggleAddToFavourite={handleToggleFavourite}
+                                isFavourite={favourites.some((fav) => fav.guid === article.guid)}
+                                onShowDetails={(articleToShow) => setDetailsArticle(articleToShow)}
+                            />
+                        ))
+                    }
+                    {showOnlyFavourite && (
+                        favourites.map((fav) => (
+                            <ArticleSummary
+                                key={fav.guid}
+                                article={fav}
+                                toggleAddToFavourite={handleToggleFavourite}
+                                isFavourite
+                                onShowDetails={(articleToShow) => setDetailsArticle(articleToShow)}
+                            />
+                        ))
+                    )}
+                    <Tooltip
+                        id='bookmark-info'
+                        style={{
+                            position: 'absolute',
+                            color: 'black',
+                            boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
+                            borderRadius: '5px',
+                            padding: '0.5rem',
+                            zIndex: 2,
+                        }}
+                    />
+                </ArticleSummaryWrapper>
+            </StyledRssWrapper>
+            {detailsArticle && (
+                <ArticleDetails
+                    articleTitle={detailsArticle.title}
+                    articleDetails={detailsArticle['content:encoded']}
+                    articleLink={detailsArticle.link}
+                    articleSummary={detailsArticle.content}
+                    onClose={() => setDetailsArticle(null)}
+                />
+            )}
+        </>
+
+
     );
 };
 
