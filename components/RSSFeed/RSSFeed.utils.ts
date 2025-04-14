@@ -13,3 +13,7 @@ export const getFeedArticlesByFeedUrls = async (subscriptions: Subscription[]): 
     }
     return response.json();
 }
+
+export const getSortedItems = (feeds: FeedDTO[]) => {
+    return feeds.sort((a, b) => b.isoDate.localeCompare(a.isoDate));
+}

@@ -5,8 +5,8 @@ import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
 import { ErrorLabel, Label } from '../FeedChoser/FeedChoser.styled';
-import { getFeedArticlesByFeedUrls } from './RSSFeed.utils';
-import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
+import { getFeedArticlesByFeedUrls, getSortedItems } from './RSSFeed.utils';
+import { getInitialValueFromLocalStore, setValueToLocalStore, sortFeedItems } from '../utils';
 import ArticleSummary from '../ArticleSummary/ArticleSummary';
 import { Tooltip } from 'react-tooltip';
 import { FeedDTO } from './RSSFeed.types';
@@ -45,6 +45,8 @@ const RSSFeed = () => {
         }
     }
 
+    const isEmpty = (feedQuery.data === undefined || feedQuery.data.length === 0) && favourites.length === 0;
+
     return (
         <>
             <StyledRssWrapper>
@@ -55,14 +57,15 @@ const RSSFeed = () => {
                     subscriptions={subscriptions}
                     onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
                 />
-                <FilterWrapper>
-                    <Label>
-                        Show only favourite articles:
-                    </Label>
-                    <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
-                        {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
-                    </StarWrapper>
-                </FilterWrapper>
+                {isEmpty === false && (
+                    <FilterWrapper>
+                        <Label>
+                            Show only favourite articles:
+                        </Label>
+                        <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
+                            {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
+                        </StarWrapper>
+                    </FilterWrapper>)}
                 <ArticleSummaryWrapper>
                     {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
                     {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
@@ -80,7 +83,7 @@ const RSSFeed = () => {
                         ))
                     }
                     {showOnlyFavourite && (
-                        favourites.map((fav) => (
+                        getSortedItems(favourites).map((fav) => (
                             <ArticleSummary
                                 key={fav.guid}
                                 article={fav}
