@@ -16,6 +16,7 @@ export const Input = styled.input`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.secondary};
+    font-size: clamp(0.7rem, 0.564rem + 0.436vw, 1rem);
   }
 `;
 

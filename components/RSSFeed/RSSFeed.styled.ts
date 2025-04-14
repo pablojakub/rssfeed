@@ -36,7 +36,7 @@ export const StyledTitleHeaderWrapper = styled.div`
 
 export const StyledHeader = styled.h1`
     margin: 0;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 1.273rem + 0.727vw, 2rem);
     font-weight: 700;
     color: white;
 `;
