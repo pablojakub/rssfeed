@@ -1,10 +1,9 @@
 'use client'
 import React, { useState, useRef } from 'react';
-import { Chip, ChipsContainer, Container, Dropdown, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, LabelWrapper, RemoveButton, StarWrapper, StyledFeedChoserWrapper } from './FeedChoser.styled';
+import { Chip, ChipsContainer, Container, Dropdown, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, RemoveButton, StyledFeedChoserWrapper } from './FeedChoser.styled';
 import { ChipObj, FeedChoserProps, FeedElement } from './FeedChoser.types';
 import { extractChips, getRandomColor } from './FeedChoser.utils';
 import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
-import { FilledStar } from '../ArticleSummary/Bookmark/Bookmark';
 
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
