@@ -43,7 +43,7 @@ export const StyledHeader = styled.h1`
 
 export const ArticleSummaryWrapper = styled.div`
     grid-column: breakout;
-    height: 630px;
+    height: 65vh;
     display: grid;
     grid-auto-rows: 22%;
     gap: 8px;
@@ -79,18 +79,18 @@ export const ArticleSummaryWrapper = styled.div`
     }
 
      @media (max-width: ${BREAKPOINTS.LAPTOP}) {
-        height: 430px;
-        grid-auto-rows: 30%;
+        grid-auto-rows: 32%;
+        height: 57vh;
     }
 
      @media (max-width: ${BREAKPOINTS.TABLET}) {
-        height: 760px;
         grid-auto-rows: 18%;
+        height: 70vh;
     }
     
     @media (max-width: ${BREAKPOINTS.MOBILE}) {
-        height: 560px;
-        grid-auto-rows: 24%;
+        grid-auto-rows: 28%;
+        height: 57vh;
     }
 `;
 

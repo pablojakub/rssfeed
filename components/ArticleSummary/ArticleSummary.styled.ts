@@ -31,6 +31,9 @@ export const ArticleHeader = styled.h2`
 export const ArticleBibliography = styled.p`
     font-size: .8rem;
     font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: ${({ theme }) => theme.colors.secondary};
 `;
 
