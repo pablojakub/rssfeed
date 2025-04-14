@@ -143,4 +143,9 @@ export const Message = styled.div<{ showmessage: string }>`
     opacity: ${({ showmessage }) => showmessage === 'true' ? '1' : '0'};
     transition: opacity 200ms ease-in-out;
     z-index: 2;
+
+    @media (max-width: ${BREAKPOINTS.MOBILE}) {
+       width: 300px;
+       font-size: 0.8rem;
+    }
 `

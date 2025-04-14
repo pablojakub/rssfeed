@@ -15,7 +15,7 @@ export const StyledModalWrapper = styled.div`
     padding: 8px 16px;
     max-width: 500px;
      width: 100%;
-    max-height: 90vh;
+    max-height: 80vh;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -33,7 +33,7 @@ export const StyledCloseBtn = styled.div`
 
 export const Content = styled.div`
     text-align: center;
-    max-height: 75vh;
+    max-height: 65vh;
     overflow: auto;
 
     figure {

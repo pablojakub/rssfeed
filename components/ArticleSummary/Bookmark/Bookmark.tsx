@@ -35,10 +35,8 @@ const Bookmark = (props: BookmarkProps) => {
             data-tooltip-content={props.isChecked
                 ? 'Remove from favourites'
                 : 'Add to favourites'}
-        ><span className={`Confetti Explosion`}>
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                {props.isChecked || isHovered ? <FilledStar /> : <OutlineStar />}
-            </span>
+        >
+            {props.isChecked || isHovered ? <FilledStar /> : <OutlineStar />}
         </StyledIconWrapper>
     );
 };
