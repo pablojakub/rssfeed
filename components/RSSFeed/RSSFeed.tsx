@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { ArticleSummaryWrapper, FilterWrapper, LabelWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import { ArticleSummaryWrapper, FilterWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
 import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
