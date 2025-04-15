@@ -73,7 +73,7 @@ export const ArticleSummaryWrapper = styled.div`
         width: 8px;
     }
 
-    :hover::-webkit-scrollbar-thumb {
+    &:hover::-webkit-scrollbar-thumb {
         width: 8px;
         border-radius: 5px;
         background-color: ${({ theme }) => theme.colors.scrollBarColor};

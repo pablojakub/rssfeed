@@ -10,6 +10,7 @@ export const Input = styled.input`
   padding: ${({ theme }) => theme.layout.paddingInline};
   background: white;
   font-size: 1rem;
+  color: black;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
@@ -17,6 +18,10 @@ export const Input = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.colors.secondary};
     font-size: clamp(0.7rem, 0.5rem + 0.4vw, 1rem);
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${({ theme }) => theme.colors.primary};
   }
 `;
 
