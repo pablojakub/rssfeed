@@ -9,7 +9,13 @@ export default async function getRSSFeedArticles(req: NextApiRequest, res: NextA
         const subscriptions: string[] = JSON.parse(req.body) as string[];
 
         const feeds = await Promise.all(
-            subscriptions.map(subs => parser.parseURL(subs))
+            subscriptions.map(subs =>
+                parser.parseURL(subs)
+                    .catch(error => {
+                        console.error(`Failed to parse URL ${subs}:`, error);
+                        return { items: [] };
+                    })
+            )
         );
         const allItems = feeds.flatMap(feed => feed.items);
         const sortedItems = sortFeedItems(allItems);

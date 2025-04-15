@@ -9,6 +9,10 @@ const getTheme = () => ({
         errorLabelColor: 'red',
         scrollBarColor: 'hsl(220, 14%, 58%)',
     },
+    layout: {
+        shadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        paddingInline: '8px',
+    }
 } as DefaultTheme);
 
 export default getTheme;

@@ -17,6 +17,10 @@ const GlobalStyle = createGlobalStyle`
     body {
         background-color: ${({ theme }) => theme.colors.background};
     }
+
+    p, h1, h2, h3, h4 {
+        color: black;
+    }
 `;
 
 const queryClient = new QueryClient();

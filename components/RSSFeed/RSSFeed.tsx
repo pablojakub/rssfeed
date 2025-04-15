@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { ArticleSummaryWrapper, FilterWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import { ArticleSummaryWrapper, FilterWrapper, LabelWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
 import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +45,10 @@ const RSSFeed = () => {
         }
     }
 
+    const isTouchDevice = typeof window !== "undefined" && (
+        'ontouchstart' in window || navigator.maxTouchPoints > 0
+    );
+
     const isEmpty = (feedQuery.data === undefined || feedQuery.data.length === 0) && favourites.length === 0;
 
     return (
@@ -59,12 +63,15 @@ const RSSFeed = () => {
                 />
                 {isEmpty === false && (
                     <FilterWrapper>
+                        <LabelWrapper>
+                            <Label>{showOnlyFavourite ? 'Show all articles' : 'Show favourite articles'}:</Label>
+                            <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
+                                {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
+                            </StarWrapper>
+                        </LabelWrapper>
                         <Label>
-                            Show only favourite articles:
+                            {`Listed: ${showOnlyFavourite ? favourites.length : feedQuery.data?.length} elements`}
                         </Label>
-                        <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
-                            {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
-                        </StarWrapper>
                     </FilterWrapper>)}
                 <ArticleSummaryWrapper>
                     {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
@@ -93,17 +100,18 @@ const RSSFeed = () => {
                             />
                         ))
                     )}
-                    <Tooltip
-                        id='bookmark-info'
-                        style={{
-                            position: 'absolute',
-                            color: 'black',
-                            boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
-                            borderRadius: '5px',
-                            padding: '0.5rem',
-                            zIndex: 2,
-                        }}
-                    />
+                    {isTouchDevice === false && (
+                        <Tooltip
+                            id='bookmark-info'
+                            style={{
+                                position: 'absolute',
+                                color: 'black',
+                                boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
+                                borderRadius: '5px',
+                                padding: '0.5rem',
+                                zIndex: 2,
+                            }}
+                        />)}
                 </ArticleSummaryWrapper>
             </StyledRssWrapper>
             {detailsArticle && (

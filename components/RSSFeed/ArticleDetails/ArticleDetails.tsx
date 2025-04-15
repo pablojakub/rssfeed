@@ -1,5 +1,6 @@
 import MarkdownView from 'react-showdown';
 import styled from 'styled-components';
+import { BREAKPOINTS } from '../RSSFeed.styled';
 
 const StyledOverlay = styled.div`
     position: fixed;
@@ -13,7 +14,7 @@ const StyledOverlay = styled.div`
 export const StyledModalWrapper = styled.div`
     position: fixed;
     padding: 8px 16px;
-    max-width: 500px;
+    max-width: 800px;
      width: 100%;
     max-height: 80vh;
     top: 50%;
@@ -36,10 +37,18 @@ export const Content = styled.div`
     max-height: 60vh;
     overflow: auto;
 
-    figure {
+    figure, video {
         text-align: center;
-        max-width: 460px;
+        max-width: 760px;
         margin-block: 8px;
+    }
+
+    @media (max-width: ${BREAKPOINTS.MOBILE}) {
+        figure, video {
+            text-align: center;
+            max-width: 460px;
+            margin-block: 8px;
+        }
     }
 
     .social-icon {
@@ -57,6 +66,11 @@ export const Content = styled.div`
     section[class*="related-articles"] {
         display: none;
     } 
+
+    svg {
+        display: none;
+    }
+
 `;
 
 export const StyledModalHeader = styled.h3`

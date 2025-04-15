@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 
-const BREAKPOINTS = {
+export const BREAKPOINTS = {
     LAPTOP: '1600px',
     TABLET: '1100px',
     MOBILE: '550px',
@@ -32,6 +32,7 @@ export const StyledTitleHeaderWrapper = styled.div`
     padding: 16px;
 
     background-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.layout.shadow};
 `
 
 export const StyledHeader = styled.h1`
@@ -104,10 +105,14 @@ export const pulseAnimation = keyframes`
 `;
 
 export const SkeletonLoader = styled.div<{ width?: number, height?: string }>`
-    width: 98%;
+    width: calc(100% - ${({ theme }) => theme.layout.paddingInline});
     border-radius: 5px;
-    background-color: ${({ theme }) => theme.colors.scrollBarColor};;
+    background-color: ${({ theme }) => theme.colors.scrollBarColor};
     animation: ${pulseAnimation} ease-out 1.7s infinite;
+
+      @media (max-width: ${BREAKPOINTS.MOBILE}) {
+       width: 100%;
+    }
 `;
 
 export const FilterWrapper = styled.div`
@@ -116,8 +121,16 @@ export const FilterWrapper = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 8px;
 `;
+
+export const LabelWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`
 
 export const StarWrapper = styled.div`
   cursor: pointer;

@@ -1,13 +1,14 @@
 import styled from "styled-components";
+import { BREAKPOINTS } from "../RSSFeed/RSSFeed.styled";
 
 export const StyledArticleSummaryWrapper = styled.div`
     border-radius: 5px;
     padding: 8px 16px;
     margin-left: auto;
     margin-right: auto;
-    width: 98%;
+    width: calc(100% - 2* ${({ theme }) => theme.layout.paddingInline});
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: ${({ theme }) => theme.layout.shadow};
     transition: all 0.3s ease;
     transform: perspective(1000px) translateZ(0);
     background: white;
@@ -15,6 +16,10 @@ export const StyledArticleSummaryWrapper = styled.div`
     &:hover {
         transform: perspective(1000px) translateZ(2px);
         box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: ${BREAKPOINTS.MOBILE}) {
+       width: 100%;
     }
 `;
 

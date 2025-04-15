@@ -35,7 +35,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             setInputValue('');
             return;
         }
-        setError('Unproper input value');
+        setError('Invalid input value. Type url with https://');
         setInputValue('');
 
     };
@@ -79,6 +79,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
+                    type='url'
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}

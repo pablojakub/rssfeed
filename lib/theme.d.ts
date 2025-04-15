@@ -10,5 +10,9 @@ declare module 'styled-components' {
             errorLabelColor: string;
             scrollBarColor: string;
         };
+        layout: {
+            shadow: string;
+            paddingInline: string;
+        };
     }
 }

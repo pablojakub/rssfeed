@@ -56,19 +56,19 @@ export const Dropdown = styled.ul`
   list-style: none;
   padding: 0;
   margin: 2px 0 0;
-  z-index: 10;
+  z-index: 4;
   border-radius: 0 0 8px 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme.layout.shadow};
 `;
 
 export const DropdownItem = styled.li<{ isdisabled: string }>`
-  padding: 10px;
+  padding: ${({ theme }) => theme.layout.paddingInline};
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   &:hover {
-    background: #f9f9f9;
+    background: ${({ theme }) => theme.colors.background};
   }
 
   ${({ isdisabled, theme }) => isdisabled === 'true' && css`
@@ -81,13 +81,16 @@ export const DropdownItem = styled.li<{ isdisabled: string }>`
 `;
 
 export const DropdownText = styled.span`
-  flex: 1;
-  color: black;
+    flex: 1;
+    color: black;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `;
 
 export const DropdownRemove = styled.span`
   margin-left: 10px;
-  color: #999;
+  color: black;
   cursor: pointer;
   font-weight: bold;
   &:hover {
