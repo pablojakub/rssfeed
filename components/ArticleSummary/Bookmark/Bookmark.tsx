@@ -20,6 +20,9 @@ export const FilledStar = () => (
 
 const Bookmark = (props: BookmarkProps) => {
     const [isHovered, setIsHovered] = useState(false);
+    const isTouchDevice = typeof window !== "undefined" && (
+        'ontouchstart' in window || navigator.maxTouchPoints > 0
+    );
 
     return (
         <StyledIconWrapper
@@ -36,7 +39,7 @@ const Bookmark = (props: BookmarkProps) => {
                 ? 'Remove from favourites'
                 : 'Add to favourites'}
         >
-            {props.isChecked || isHovered ? <FilledStar /> : <OutlineStar />}
+            {props.isChecked || (isHovered && !isTouchDevice) ? <FilledStar /> : <OutlineStar />}
         </StyledIconWrapper>
     );
 };

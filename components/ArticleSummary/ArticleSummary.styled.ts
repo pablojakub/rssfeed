@@ -9,7 +9,7 @@ export const StyledArticleSummaryWrapper = styled.div`
     width: calc(100% - 2* ${({ theme }) => theme.layout.paddingInline});
     overflow: hidden;
     box-shadow: ${({ theme }) => theme.layout.shadow};
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     transform: perspective(1000px) translateZ(0);
     background: white;
 

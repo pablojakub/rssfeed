@@ -44,7 +44,7 @@ export const StyledHeader = styled.h1`
 
 export const ArticleSummaryWrapper = styled.div`
     grid-column: breakout;
-    height: 65vh;
+    height: 63vh;
     display: grid;
     grid-auto-rows: 130px;
     gap: 8px;
@@ -80,11 +80,11 @@ export const ArticleSummaryWrapper = styled.div`
     }
 
      @media (max-width: ${BREAKPOINTS.LAPTOP}) {
-        height: 57vh;
+        height: 53vh;
     }
 
      @media (max-width: ${BREAKPOINTS.TABLET}) {
-        height: 70vh;
+        height: 67vh;
     }
     
     @media (max-width: ${BREAKPOINTS.MOBILE}) {
@@ -115,30 +115,6 @@ export const SkeletonLoader = styled.div<{ width?: number, height?: string }>`
     }
 `;
 
-export const FilterWrapper = styled.div`
-    grid-column: breakout;
-    padding-inline: 8px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-`;
-
-export const LabelWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-`
-
-export const StarWrapper = styled.div`
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-`;
-
-
 export const Message = styled.div<{ showmessage: string }>`
     position: fixed;
     bottom: 40px;
@@ -161,4 +137,9 @@ export const Message = styled.div<{ showmessage: string }>`
        width: 300px;
        font-size: 0.8rem;
     }
-`
+`;
+
+export const NoDataWrapper = styled.div`
+    display: grid;
+    place-content: center;
+`;

@@ -1,17 +1,17 @@
 'use client'
 import { useState } from 'react';
-import { ArticleSummaryWrapper, FilterWrapper, LabelWrapper, SkeletonLoader, StarWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import { ArticleSummaryWrapper, SkeletonLoader, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
 import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
 import { ErrorLabel, Label } from '../FeedChoser/FeedChoser.styled';
-import { getFeedArticlesByFeedUrls, getSortedItems } from './RSSFeed.utils';
+import { getArticlesSummary, getFeedArticlesByFeedUrls, getSortedItems } from './RSSFeed.utils';
 import { getInitialValueFromLocalStore, setValueToLocalStore, sortFeedItems } from '../utils';
 import ArticleSummary from '../ArticleSummary/ArticleSummary';
 import { Tooltip } from 'react-tooltip';
 import { FeedDTO } from './RSSFeed.types';
-import { FilledStar, OutlineStar } from '../ArticleSummary/Bookmark/Bookmark';
 import ArticleDetails from './ArticleDetails/ArticleDetails';
+import FilterPanel from './FilterPanel/FilterPanel';
 
 const FAVOURITE_ARTICLES_KEY = 'favourite_articles';
 
@@ -20,6 +20,8 @@ const RSSFeed = () => {
     const [favourites, setFavourites] = useState<FeedDTO[]>(getInitialValueFromLocalStore<FeedDTO[]>(FAVOURITE_ARTICLES_KEY));
     const [showOnlyFavourite, setShowOnlyFavourite] = useState(false);
     const [detailsArticle, setDetailsArticle] = useState<FeedDTO | null>(null);
+    const [searchValue, setSearchValue] = useState('');
+    console.log('🚀 ~ RSSFeed ~ searchValue:', searchValue);
 
     const feedQuery = useQuery({
         queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],
@@ -45,11 +47,13 @@ const RSSFeed = () => {
         }
     }
 
+    const onShowDetails = (articleToShow: FeedDTO) => {
+        setDetailsArticle(articleToShow);
+    }
+
     const isTouchDevice = typeof window !== "undefined" && (
         'ontouchstart' in window || navigator.maxTouchPoints > 0
     );
-
-    const isEmpty = (feedQuery.data === undefined || feedQuery.data.length === 0) && favourites.length === 0;
 
     return (
         <>
@@ -61,44 +65,19 @@ const RSSFeed = () => {
                     subscriptions={subscriptions}
                     onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
                 />
-                {isEmpty === false && (
-                    <FilterWrapper>
-                        <LabelWrapper>
-                            <Label>{showOnlyFavourite ? 'Show all articles' : 'Show favourite articles'}:</Label>
-                            <StarWrapper onClick={() => setShowOnlyFavourite(!showOnlyFavourite)} >
-                                {showOnlyFavourite ? <FilledStar /> : <OutlineStar />}
-                            </StarWrapper>
-                        </LabelWrapper>
-                        <Label>
-                            {`Listed: ${showOnlyFavourite ? favourites.length : feedQuery.data?.length} elements`}
-                        </Label>
-                    </FilterWrapper>)}
+                <FilterPanel
+                    showOnlyFavourites={showOnlyFavourite}
+                    onToggleShowFavourites={(showFavourites) => setShowOnlyFavourite(showFavourites)}
+                    onSearchChange={(search) => setSearchValue(search)}
+                />
                 <ArticleSummaryWrapper>
-                    {feedQuery.isError && <ErrorLabel>{feedQuery.error.message}</ErrorLabel>}
-                    {feedQuery.isLoading && Array.from(Array(5), (_, index) => (
-                        <SkeletonLoader key={`loader_${index}`} />
-                    ))}
-                    {feedQuery.data && showOnlyFavourite === false &&
-                        feedQuery.data.map((article) => (
-                            <ArticleSummary
-                                key={article.guid}
-                                article={article}
-                                toggleAddToFavourite={handleToggleFavourite}
-                                isFavourite={favourites.some((fav) => fav.guid === article.guid)}
-                                onShowDetails={(articleToShow) => setDetailsArticle(articleToShow)}
-                            />
-                        ))
-                    }
-                    {showOnlyFavourite && (
-                        getSortedItems(favourites).map((fav) => (
-                            <ArticleSummary
-                                key={fav.guid}
-                                article={fav}
-                                toggleAddToFavourite={handleToggleFavourite}
-                                isFavourite
-                                onShowDetails={(articleToShow) => setDetailsArticle(articleToShow)}
-                            />
-                        ))
+                    {getArticlesSummary(
+                        showOnlyFavourite,
+                        searchValue,
+                        favourites,
+                        feedQuery,
+                        handleToggleFavourite,
+                        onShowDetails,
                     )}
                     {isTouchDevice === false && (
                         <Tooltip
