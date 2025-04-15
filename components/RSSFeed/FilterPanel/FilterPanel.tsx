@@ -19,7 +19,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                 <Label htmlFor="search-input">Search by title:</Label>
                 <Input
                     id='search-input'
-                    type='url'
+                    key='filter-input'
                     onChange={onSearchChange}
                     placeholder="Start typing..."
                 />

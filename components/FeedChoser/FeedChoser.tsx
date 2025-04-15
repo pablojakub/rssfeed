@@ -8,6 +8,11 @@ import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
 
+const RSSFeedUrls = [
+    'https://www.nasa.gov/technology/feed/',
+    'https://techcrunch.com/feed/',
+]
+
 const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -60,7 +65,6 @@ const FeedChoser = (props: FeedChoserProps) => {
             const newFeeds = prev.filter((feed) => feed.url !== urlToRemove);
             setValueToLocalStore(STORED_FEEDS_KEY, newFeeds);
             return newFeeds;
-
         });
     };
 
@@ -72,6 +76,14 @@ const FeedChoser = (props: FeedChoserProps) => {
         }
     };
 
+    const handlePromptClick = (url: string) => {
+        setError(null);
+        const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
+        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+        props.onSubscriptionChange(newChips);
+        setFeedElements([{ url }]);
+    }
+
     return (
         <StyledFeedChoserWrapper>
             <Container>
@@ -79,7 +91,10 @@ const FeedChoser = (props: FeedChoserProps) => {
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
-                    type='url'
+                    key='feed-input'
+                    type='text'
+                    inputMode="text"
+                    enterKeyHint="go"
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -87,6 +102,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                     onFocus={() => setShowDropdown(true)}
                     onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                     placeholder="Paste a URL and press Enter to add new RSS Feed"
+                    error={error}
                 />
                 {showDropdown && feedElements.length > 0 && (
                     <Dropdown>
@@ -102,6 +118,21 @@ const FeedChoser = (props: FeedChoserProps) => {
                                 <DropdownRemove onClick={() => handleDeleteFromDropdown(feedElement.url)}>
                                     ×
                                 </DropdownRemove>
+                            </DropdownItem>
+                        ))}
+                    </Dropdown>
+                )}
+                {showDropdown && feedElements.length === 0 && (
+                    <Dropdown>
+                        <DropdownLabel>No idea? Try one of below items:</DropdownLabel>
+                        {RSSFeedUrls.map((feedElement, idx) => (
+                            <DropdownItem
+                                key={idx}
+                                isdisabled={'false'}
+                            >
+                                <DropdownText onClick={() => handlePromptClick(feedElement)}>
+                                    {feedElement}
+                                </DropdownText>
                             </DropdownItem>
                         ))}
                     </Dropdown>

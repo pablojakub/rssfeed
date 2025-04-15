@@ -5,15 +5,15 @@ export const Container = styled.div`
   font-family: sans-serif;
 `;
 
-export const Input = styled.input`
+export const Input = styled.input<{ error?: string | null }>`
   width: 100%;
   padding: ${({ theme }) => theme.layout.paddingInline};
   background: white;
   font-size: 1rem;
   color: black;
-  border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
+  outline: 1px solid ${({ error }) => error ? 'red' : '#ccc'};
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.secondary};
@@ -21,7 +21,7 @@ export const Input = styled.input`
   }
 
   &:focus-visible {
-    outline: 1px solid ${({ theme }) => theme.colors.primary};
+      outline: 1px solid ${({ theme }) => theme.colors.primary};
   }
 `;
 
