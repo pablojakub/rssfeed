@@ -22,8 +22,10 @@ const FeedChoser = (props: FeedChoserProps) => {
 
     const handleAddUrl = (url: string) => {
         const domain = extractChips(url);
+        alert(domain);
         setError(null);
         if (domain && !props.subscriptions.find((chip) => chip.label === url)) {
+            alert('wijam do dodania');
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }]
             setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
             props.onSubscriptionChange(newChips);
@@ -92,7 +94,6 @@ const FeedChoser = (props: FeedChoserProps) => {
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
-                    type='url'
                     key='feed-input'
                     ref={inputRef}
                     value={inputValue}
