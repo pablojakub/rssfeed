@@ -97,6 +97,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                 <Input
                     id='feed-input'
                     key='feed-input'
+                    type='text'
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}

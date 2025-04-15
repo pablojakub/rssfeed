@@ -142,4 +142,5 @@ export const Message = styled.div<{ showmessage: string }>`
 export const NoDataWrapper = styled.div`
     display: grid;
     place-content: center;
+    color: black;
 `;
