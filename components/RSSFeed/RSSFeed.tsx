@@ -65,11 +65,11 @@ const RSSFeed = () => {
                     subscriptions={subscriptions}
                     onSubscriptionChange={(selectedSubscriptions) => setSubscriptions(selectedSubscriptions)}
                 />
-                {/* <FilterPanel
+                <FilterPanel
                     showOnlyFavourites={showOnlyFavourite}
                     onToggleShowFavourites={(showFavourites) => setShowOnlyFavourite(showFavourites)}
                     onSearchChange={(search) => setSearchValue(search)}
-                /> */}
+                />
                 <ArticleSummaryWrapper>
                     {getArticlesSummary(
                         showOnlyFavourite,

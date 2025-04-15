@@ -93,6 +93,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                 <Input
                     id='feed-input'
                     type='url'
+                    key='feed-input'
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
