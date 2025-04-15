@@ -48,7 +48,9 @@ const FeedChoser = (props: FeedChoserProps) => {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
+        alert('key down')
         if (e.key === 'Enter') {
+            alert('enter')
             e.preventDefault();
             e.stopPropagation();
             handleAddUrl(inputValue);
