@@ -22,7 +22,6 @@ const FeedChoser = (props: FeedChoserProps) => {
 
     const handleAddUrl = (url: string) => {
         const domain = extractChips(url);
-        alert(domain);
         setError(null);
         if (domain && !props.subscriptions.find((chip) => chip.label === url)) {
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }]

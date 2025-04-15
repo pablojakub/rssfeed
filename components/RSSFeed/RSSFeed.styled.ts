@@ -44,7 +44,7 @@ export const StyledHeader = styled.h1`
 
 export const ArticleSummaryWrapper = styled.div`
     grid-column: breakout;
-    height: 63vh;
+    height: 62vh;
     display: grid;
     grid-auto-rows: 130px;
     gap: 8px;
@@ -57,7 +57,7 @@ export const ArticleSummaryWrapper = styled.div`
     &::after {
         content: '';
         position: sticky;
-        background: linear-gradient(0deg, hsl(0, 0%, 96%) 30%, transparent 70%);
+        background: linear-gradient(0deg, #EBEBEB, transparent 70%);
         width: 100%;
         height: 35px;
         bottom: 0;
@@ -80,7 +80,7 @@ export const ArticleSummaryWrapper = styled.div`
     }
 
      @media (max-width: ${BREAKPOINTS.LAPTOP}) {
-        height: 53vh;
+        height: 52vh;
     }
 
      @media (max-width: ${BREAKPOINTS.TABLET}) {
