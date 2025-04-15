@@ -8,6 +8,11 @@ import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
 
+const RSSFeedUrls = [
+    'https://www.nasa.gov/technology/feed/',
+    'https://techcrunch.com/feed/',
+]
+
 const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -43,6 +48,7 @@ const FeedChoser = (props: FeedChoserProps) => {
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             e.preventDefault();
+            e.stopPropagation();
             handleAddUrl(inputValue);
         }
     };
@@ -104,6 +110,21 @@ const FeedChoser = (props: FeedChoserProps) => {
                                 <DropdownRemove onClick={() => handleDeleteFromDropdown(feedElement.url)}>
                                     ×
                                 </DropdownRemove>
+                            </DropdownItem>
+                        ))}
+                    </Dropdown>
+                )}
+                {showDropdown && feedElements.length === 0 && (
+                    <Dropdown>
+                        <DropdownLabel>No idea? Try one of below items:</DropdownLabel>
+                        {RSSFeedUrls.map((feedElement, idx) => (
+                            <DropdownItem
+                                key={idx}
+                                isdisabled={'false'}
+                            >
+                                <DropdownText onClick={() => handleDropdownClick(feedElement)}>
+                                    {feedElement}
+                                </DropdownText>
                             </DropdownItem>
                         ))}
                     </Dropdown>
