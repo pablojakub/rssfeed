@@ -67,7 +67,6 @@ const FeedChoser = (props: FeedChoserProps) => {
             const newFeeds = prev.filter((feed) => feed.url !== urlToRemove);
             setValueToLocalStore(STORED_FEEDS_KEY, newFeeds);
             return newFeeds;
-
         });
     };
 
@@ -78,6 +77,13 @@ const FeedChoser = (props: FeedChoserProps) => {
             props.onSubscriptionChange(newChips);
         }
     };
+
+    const handlePromptClick = (url: string) => {
+        const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
+        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+        props.onSubscriptionChange(newChips);
+        setFeedElements([{ url }]);
+    }
 
     return (
         <StyledFeedChoserWrapper>
@@ -122,7 +128,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                                 key={idx}
                                 isdisabled={'false'}
                             >
-                                <DropdownText onClick={() => handleDropdownClick(feedElement)}>
+                                <DropdownText onClick={() => handlePromptClick(feedElement)}>
                                     {feedElement}
                                 </DropdownText>
                             </DropdownItem>
