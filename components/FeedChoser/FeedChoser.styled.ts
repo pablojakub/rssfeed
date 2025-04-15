@@ -5,7 +5,7 @@ export const Container = styled.div`
   font-family: sans-serif;
 `;
 
-export const Input = styled.input`
+export const Input = styled.input<{ error?: string | null }>`
   width: 100%;
   padding: ${({ theme }) => theme.layout.paddingInline};
   background: white;
@@ -14,6 +14,7 @@ export const Input = styled.input`
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
+  outline: 1px solid ${({ error }) => error && 'red'};
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.secondary};

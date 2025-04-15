@@ -79,7 +79,6 @@ const FeedChoser = (props: FeedChoserProps) => {
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
-                    type='url'
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
@@ -87,6 +86,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                     onFocus={() => setShowDropdown(true)}
                     onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                     placeholder="Paste a URL and press Enter to add new RSS Feed"
+                    error={error}
                 />
                 {showDropdown && feedElements.length > 0 && (
                     <Dropdown>
