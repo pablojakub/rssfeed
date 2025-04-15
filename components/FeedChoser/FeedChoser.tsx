@@ -42,6 +42,7 @@ const FeedChoser = (props: FeedChoserProps) => {
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
+            e.preventDefault();
             handleAddUrl(inputValue);
         }
     };
@@ -79,6 +80,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
                 <Input
                     id='feed-input'
+                    type='url'
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
