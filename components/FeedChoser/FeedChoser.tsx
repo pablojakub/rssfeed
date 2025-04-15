@@ -48,10 +48,8 @@ const FeedChoser = (props: FeedChoserProps) => {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
         if (e.key === 'Enter') {
-            alert('enter')
+            alert('enter');
             handleAddUrl(inputValue);
         }
     };
@@ -97,6 +95,8 @@ const FeedChoser = (props: FeedChoserProps) => {
                     id='feed-input'
                     key='feed-input'
                     type='text'
+                    inputMode="text"
+                    enterKeyHint="go"
                     ref={inputRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
