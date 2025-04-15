@@ -25,7 +25,6 @@ const FeedChoser = (props: FeedChoserProps) => {
         alert(domain);
         setError(null);
         if (domain && !props.subscriptions.find((chip) => chip.label === url)) {
-            alert('wijam do dodania');
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }]
             setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
             props.onSubscriptionChange(newChips);
@@ -49,7 +48,6 @@ const FeedChoser = (props: FeedChoserProps) => {
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            alert('enter');
             handleAddUrl(inputValue);
         }
     };
@@ -80,6 +78,7 @@ const FeedChoser = (props: FeedChoserProps) => {
     };
 
     const handlePromptClick = (url: string) => {
+        setError(null);
         const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
         setValueToLocalStore(STORED_CHIPS_KEY, newChips);
         props.onSubscriptionChange(newChips);
