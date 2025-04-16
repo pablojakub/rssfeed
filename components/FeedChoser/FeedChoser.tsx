@@ -82,6 +82,7 @@ const FeedChoser = (props: FeedChoserProps) => {
         setValueToLocalStore(STORED_CHIPS_KEY, newChips);
         props.onSubscriptionChange(newChips);
         setFeedElements([{ url }]);
+        setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, [{ url }]);
     }
 
     return (
