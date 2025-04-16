@@ -4,10 +4,14 @@ import ArticleSummary from "../ArticleSummary/ArticleSummary";
 import { NoDataWrapper, SkeletonLoader } from "./RSSFeed.styled";
 import { UseQueryResult } from "@tanstack/react-query";
 import { ErrorLabel } from "../FeedChoser/FeedChoser.styled";
+import { SELECT_ALL_KEY } from "../FeedChoser/FeedChoser";
 
 
 export const getFeedArticlesByFeedUrls = async (subscriptions: Subscription[]): Promise<FeedDTO[]> => {
-    const subscriptionUrls = subscriptions.map((sub) => sub.label);
+    const subscriptionUrls = subscriptions
+        .filter((sub) => sub.label !== SELECT_ALL_KEY)
+        .map((sub) => sub.label)
+    console.log(subscriptionUrls);
     const response = await fetch('/api/rss', {
         method: 'POST',
         body: JSON.stringify(subscriptionUrls)

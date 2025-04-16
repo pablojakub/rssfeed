@@ -1,9 +1,10 @@
-import { FilledStar, OutlineStar } from '@/components/ArticleSummary/Bookmark/Bookmark';
 import { Input, Label } from '@/components/FeedChoser/FeedChoser.styled';
 import { InputGroup, LabelWrapper, StarWrapper, StyledFilterPanelWrapper } from './FilterPanel.styled';
 import { FilterPanelProps } from './FilterPanel.types';
 import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
+import { FilledStar } from '@/components/Icons/FilledStar';
+import { OutlineStar } from '@/components/Icons/OutlineStar';
 
 const FilterPanel = (props: FilterPanelProps) => {
     const onSearchChange = useCallback(

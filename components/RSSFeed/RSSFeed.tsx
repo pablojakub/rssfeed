@@ -1,13 +1,11 @@
 'use client'
 import { useState } from 'react';
-import { ArticleSummaryWrapper, SkeletonLoader, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
+import { ArticleSummaryWrapper, StyledHeader, StyledRssWrapper, StyledTitleHeaderWrapper } from './RSSFeed.styled';
 import FeedChoser, { STORED_CHIPS_KEY } from '../FeedChoser/FeedChoser';
 import { ChipObj as Subscription } from '../FeedChoser/FeedChoser.types';
 import { useQuery } from '@tanstack/react-query';
-import { ErrorLabel, Label } from '../FeedChoser/FeedChoser.styled';
-import { getArticlesSummary, getFeedArticlesByFeedUrls, getSortedItems } from './RSSFeed.utils';
-import { getInitialValueFromLocalStore, setValueToLocalStore, sortFeedItems } from '../utils';
-import ArticleSummary from '../ArticleSummary/ArticleSummary';
+import { getArticlesSummary, getFeedArticlesByFeedUrls } from './RSSFeed.utils';
+import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 import { Tooltip } from 'react-tooltip';
 import { FeedDTO } from './RSSFeed.types';
 import ArticleDetails from './ArticleDetails/ArticleDetails';
@@ -80,7 +78,7 @@ const RSSFeed = () => {
                     )}
                     {isTouchDevice === false && (
                         <Tooltip
-                            id='bookmark-info'
+                            id='info'
                             style={{
                                 position: 'absolute',
                                 color: 'black',
