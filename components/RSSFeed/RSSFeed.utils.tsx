@@ -11,7 +11,6 @@ export const getFeedArticlesByFeedUrls = async (subscriptions: Subscription[]): 
     const subscriptionUrls = subscriptions
         .filter((sub) => sub.label !== SELECT_ALL_KEY)
         .map((sub) => sub.label)
-    console.log(subscriptionUrls);
     const response = await fetch('/api/rss', {
         method: 'POST',
         body: JSON.stringify(subscriptionUrls)
@@ -43,14 +42,16 @@ export const getArticlesSummary = (
             ))
         )
     }
-    const datasource = showOnlyFavourites ? favourites : feedQuery.data;
-    const filteredArticles = !!search.trim() ? datasource?.filter((article) => article.title.toLowerCase().includes(search.toLowerCase())) : datasource;
+    const datasource = showOnlyFavourites ? favourites.slice() : feedQuery.data?.slice();
+    const filteredArticles = !!search.trim()
+        ? datasource?.filter((article) => article.title.toLowerCase().includes(search.toLowerCase()))
+        : datasource;
     const sortedArticles = getSortedItems(filteredArticles);
     return (sortedArticles !== undefined && sortedArticles.length > 0)
         ? (
-            sortedArticles.map((article) => (
+            sortedArticles.map((article, index) => (
                 <ArticleSummary
-                    key={article.guid}
+                    key={`${article.guid}_${index}`}
                     article={article}
                     toggleAddToFavourite={handleToggleFavourite}
                     isFavourite={favourites.some((fav) => fav.guid === article.guid)}

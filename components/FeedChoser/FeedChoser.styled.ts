@@ -139,3 +139,8 @@ export const LabelWrapper = styled.div`
   gap: ${({ theme }) => theme.layout.paddingInline};
   align-items: center;
 `;
+
+export const TooltipElements = styled.div`
+   display: flex;
+   flex-direction: column;
+`

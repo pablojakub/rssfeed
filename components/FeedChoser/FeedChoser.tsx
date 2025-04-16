@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Chip, ChipsContainer, Container, Dropdown, DropdownCheckbox, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, LabelWrapper, RemoveButton, StyledFeedChoserWrapper, StyledInfoWrapper } from './FeedChoser.styled';
 import { ChipObj, FeedChoserProps, FeedElement } from './FeedChoser.types';
-import { extractChips, getRandomColor } from './FeedChoser.utils';
+import { extractChips, getDynamicChipsElements, getRandomColor } from './FeedChoser.utils';
 import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 import { Info } from '../Icons/Info';
 import { useDetectClickOutside } from 'react-detect-click-outside';
@@ -170,20 +170,22 @@ const FeedChoser = (props: FeedChoserProps) => {
             <Container>
                 <Label key='subscription_label'>Your subscriptions:</Label>
                 <ChipsContainer>
-                    {props.subscriptions
-                        .filter((chip) => chip.label !== SELECT_ALL_KEY)
-                        .map((chip, idx) => (
-                            <Chip
-                                key={idx}
-                                backgroundcolor={chip.color}
-                            >
-                                {extractChips(chip.label)}
-                            </Chip>
-                        ))}
+                    {getDynamicChipsElements(props.subscriptions, 5)}
                 </ChipsContainer>
             </Container>
             <Tooltip
                 id='entry-info'
+                style={{
+                    position: 'absolute',
+                    color: 'black',
+                    boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
+                    borderRadius: '5px',
+                    padding: '0.5rem',
+                    zIndex: 2,
+                }}
+            />
+            <Tooltip
+                id='chips-info'
                 style={{
                     position: 'absolute',
                     color: 'black',
