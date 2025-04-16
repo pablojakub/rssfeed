@@ -101,7 +101,10 @@ const FeedChoser = (props: FeedChoserProps) => {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     onFocus={() => setShowDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+                    onBlur={() => setTimeout(() => {
+                        setShowDropdown(false);
+                        setError(null);
+                    }, 150)}
                     placeholder="Paste a URL and press Enter to add new RSS Feed"
                     error={error}
                 />
