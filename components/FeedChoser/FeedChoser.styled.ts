@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Container = styled.div`
   position: relative;
@@ -52,7 +52,7 @@ export const Dropdown = styled.ul`
   top: 100%;
   left: 0;
   right: 0;
-  max-height: 150px;
+  max-height: 250px;
   background: white;
   border: 1px solid #ccc;
   border-top: none;
@@ -65,32 +65,30 @@ export const Dropdown = styled.ul`
   box-shadow: ${({ theme }) => theme.layout.shadow};
 `;
 
-export const DropdownItem = styled.li<{ isdisabled: string }>`
+export const DropdownItem = styled.li`
   padding: ${({ theme }) => theme.layout.paddingInline};
   display: flex;
-  justify-content: space-between;
+  gap: ${({ theme }) => theme.layout.paddingInline};
   align-items: center;
   cursor: pointer;
   &:hover {
     background: ${({ theme }) => theme.colors.background};
   }
-
-  ${({ isdisabled, theme }) => isdisabled === 'true' && css`
-    cursor: not-allowed;
-
-    & > span {
-      color: ${theme.colors.secondary};
-    }
-  `}
 `;
 
 export const DropdownText = styled.span`
     flex: 1;
-    color: black;
+    color: ${({ theme }) => theme.colors.labelColor};
+    font-size: clamp(0.8rem, 0.7rem + 0.3vw, 1rem);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 `;
+
+export const DropdownCheckbox = styled.input`
+  border-radius: 8px;
+  cursor: pointer;
+`
 
 export const DropdownRemove = styled.span`
   margin-left: 10px;
@@ -130,4 +128,14 @@ export const StyledFeedChoserWrapper = styled.div`
     gap: 8px;
     flex-direction: column;
     grid-column: content;
+`;
+
+export const StyledInfoWrapper = styled.span`
+  cursor: pointer;
+`;
+
+export const LabelWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.layout.paddingInline};
+  align-items: center;
 `;

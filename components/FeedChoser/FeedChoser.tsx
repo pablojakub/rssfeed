@@ -1,41 +1,50 @@
 'use client'
 import React, { useState, useRef } from 'react';
-import { Chip, ChipsContainer, Container, Dropdown, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, RemoveButton, StyledFeedChoserWrapper } from './FeedChoser.styled';
+import { Chip, ChipsContainer, Container, Dropdown, DropdownCheckbox, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, LabelWrapper, RemoveButton, StyledFeedChoserWrapper, StyledInfoWrapper } from './FeedChoser.styled';
 import { ChipObj, FeedChoserProps, FeedElement } from './FeedChoser.types';
 import { extractChips, getRandomColor } from './FeedChoser.utils';
 import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
+import { Info } from '../Icons/Info';
+import { useDetectClickOutside } from 'react-detect-click-outside';
+import { Tooltip } from 'react-tooltip';
 
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
+export const SELECT_ALL_KEY = 'Select all'
 
 const RSSFeedUrls = [
-    'https://www.nasa.gov/technology/feed/',
-    'https://techcrunch.com/feed/',
+    { url: SELECT_ALL_KEY },
+    { url: 'https://www.nasa.gov/technology/feed/' },
+    { url: 'https://techcrunch.com/feed/' },
+    { url: 'https://www.nasa.gov/aeronautics/feed/' },
 ]
 
 const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const [feedElements, setFeedElements] = useState<FeedElement[]>(getInitialValueFromLocalStore<FeedElement[]>(STORED_FEEDS_KEY));
+    const feedsFromLocalStorage = getInitialValueFromLocalStore<FeedElement[]>(STORED_FEEDS_KEY);
+    const [feedElements, setFeedElements] = useState<FeedElement[]>([...RSSFeedUrls, ...feedsFromLocalStorage]);
     const [showDropdown, setShowDropdown] = useState(false);
     const inputRef = useRef(null);
 
     const handleAddUrl = (url: string) => {
         const domain = extractChips(url);
         setError(null);
-        if (domain && !props.subscriptions.find((chip) => chip.label === url)) {
+        if (domain && !feedElements.find((feedEl) => feedEl.url === url)) {
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }]
             setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
             props.onSubscriptionChange(newChips);
             setFeedElements((prev) => {
-                const newFeeds = [...prev, { url }]
-                setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, newFeeds);
+                const newFeeds = [...prev, { url }];
+                const feedsToSaveInLocalStore = newFeeds.filter((feed) => RSSFeedUrls.includes(feed) === false);
+                setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, feedsToSaveInLocalStore);
                 return newFeeds;
             });
+
             setInputValue('');
             return;
         }
-        if (props.subscriptions.find((chip) => chip.label === url)) {
+        if (feedElements.find((feedEl) => feedEl.url === url)) {
             setError('Feed already exist');
             setInputValue('');
             return;
@@ -44,6 +53,12 @@ const FeedChoser = (props: FeedChoserProps) => {
         setInputValue('');
 
     };
+
+    const refClickOutside = useDetectClickOutside({
+        onTriggered: () => {
+            setShowDropdown(false);
+        },
+    });
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -57,107 +72,128 @@ const FeedChoser = (props: FeedChoserProps) => {
         props.onSubscriptionChange(newChips);
     };
 
-    const handleDeleteFromDropdown = (urlToRemove: string) => {
-        const newChips = props.subscriptions.filter((chip) => chip.label !== urlToRemove);
-        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+    const handleAddAll = () => {
+        const newChips = feedElements.map((el) => {
+            return {
+                color: getRandomColor(),
+                label: el.url,
+            }
+        })
+        setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
         props.onSubscriptionChange(newChips);
-        setFeedElements((prev) => {
-            const newFeeds = prev.filter((feed) => feed.url !== urlToRemove);
-            setValueToLocalStore(STORED_FEEDS_KEY, newFeeds);
-            return newFeeds;
-        });
-    };
+    }
 
-    const handleDropdownClick = (url: string) => {
+    const handleRemoveAll = () => {
+        setValueToLocalStore(STORED_CHIPS_KEY, []);
+        props.onSubscriptionChange([]);
+    }
+
+    const handleToggleAddElement = (url: string) => {
+        if (url === SELECT_ALL_KEY && !props.subscriptions.find((chip) => chip.label === SELECT_ALL_KEY)) {
+            handleAddAll();
+            return;
+        }
+        if (url === SELECT_ALL_KEY && props.subscriptions.find((chip) => chip.label === SELECT_ALL_KEY)) {
+            handleRemoveAll();
+            return;
+        }
         if (!props.subscriptions.find((chip) => chip.label === url)) {
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
             setValueToLocalStore(STORED_CHIPS_KEY, newChips);
             props.onSubscriptionChange(newChips);
+        } else {
+            handleDelete(url);
         }
     };
-
-    const handlePromptClick = (url: string) => {
-        setError(null);
-        const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
-        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
-        props.onSubscriptionChange(newChips);
-        setFeedElements([{ url }]);
-        setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, [{ url }]);
-    }
 
     return (
         <StyledFeedChoserWrapper>
             <Container>
-                <Label htmlFor="feed-input">RSS Feeds:</Label>
+                <LabelWrapper>
+                    <Label htmlFor="feed-input">RSS Feeds:
+                    </Label>
+                    <StyledInfoWrapper
+                        data-tooltip-id='entry-info'
+                        data-tooltip-place='top-start'
+                        data-tooltip-variant='light'
+                        data-tooltip-delay-show={400}
+                        data-tooltip-content={'Add new feed url with https:// prefix or select from sugested list'}
+                    ><Info />
+                    </StyledInfoWrapper>
+                </LabelWrapper>
                 {error && (<ErrorLabel htmlFor="feed-input">{error}</ErrorLabel>)}
-                <Input
-                    id='feed-input'
-                    key='feed-input'
-                    type='text'
-                    inputMode="text"
-                    enterKeyHint="go"
-                    ref={inputRef}
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setShowDropdown(true)}
-                    onBlur={() => setTimeout(() => {
-                        setShowDropdown(false);
-                        setError(null);
-                    }, 150)}
-                    placeholder="Paste a URL and press Enter to add new RSS Feed"
-                    error={error}
-                />
-                {showDropdown && feedElements.length > 0 && (
-                    <Dropdown>
-                        <DropdownLabel>Choose to which subscribe:</DropdownLabel>
-                        {feedElements.map((feedElement, idx) => (
-                            <DropdownItem
-                                key={idx}
-                                isdisabled={props.subscriptions.some((chip) => chip.label === feedElement.url) ? 'true' : 'false'}
-                            >
-                                <DropdownText onClick={() => handleDropdownClick(feedElement.url)}>
-                                    {feedElement.url}
-                                </DropdownText>
-                                <DropdownRemove onClick={() => handleDeleteFromDropdown(feedElement.url)}>
-                                    ×
-                                </DropdownRemove>
-                            </DropdownItem>
-                        ))}
-                    </Dropdown>
-                )}
-                {showDropdown && feedElements.length === 0 && (
-                    <Dropdown>
-                        <DropdownLabel>No idea? Try one of below items:</DropdownLabel>
-                        {RSSFeedUrls.map((feedElement, idx) => (
-                            <DropdownItem
-                                key={idx}
-                                isdisabled={'false'}
-                            >
-                                <DropdownText onClick={() => handlePromptClick(feedElement)}>
-                                    {feedElement}
-                                </DropdownText>
-                            </DropdownItem>
-                        ))}
-                    </Dropdown>
-                )}
+                <div ref={refClickOutside}>
+                    <Input
+                        id='feed-input'
+                        key='feed-input'
+                        type='text'
+                        inputMode="text"
+                        enterKeyHint="go"
+                        ref={inputRef}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        onFocus={() => setShowDropdown(true)}
+                        onBlur={() => setTimeout(() => {
+                            setError(null);
+                        }, 150)}
+                        placeholder="Paste a URL and press Enter to add new RSS Feed"
+                        error={error}
+                    />
+                    {showDropdown && (
+                        <Dropdown>
+                            <DropdownLabel>Choose to which subscribe:</DropdownLabel>
+                            {feedElements.map((feedElement, idx) => (
+                                <DropdownItem
+                                    key={idx}
+                                >
+                                    <DropdownCheckbox
+                                        type='checkbox'
+                                        checked={props.subscriptions.some((chip) => chip.label === feedElement.url)}
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleAddElement(feedElement.url);
+                                        }}
+                                    />
+                                    <DropdownText onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleAddElement(feedElement.url)
+                                    }}>
+                                        {feedElement.url}
+                                    </DropdownText>
+                                </DropdownItem>
+                            ))}
+                        </Dropdown>
+                    )}
+                </div>
             </Container>
             <Container>
                 <Label key='subscription_label'>Your subscriptions:</Label>
                 <ChipsContainer>
-                    {props.subscriptions.map((chip, idx) => (
-                        <Chip
-                            key={idx}
-                            backgroundcolor={chip.color}
-                        >
-                            {extractChips(chip.label)}
-                            <RemoveButton onClick={() => handleDelete(chip.label)}>×</RemoveButton>
-                        </Chip>
-                    ))}
+                    {props.subscriptions
+                        .filter((chip) => chip.label !== SELECT_ALL_KEY)
+                        .map((chip, idx) => (
+                            <Chip
+                                key={idx}
+                                backgroundcolor={chip.color}
+                            >
+                                {extractChips(chip.label)}
+                            </Chip>
+                        ))}
                 </ChipsContainer>
             </Container>
-
-        </StyledFeedChoserWrapper>
+            <Tooltip
+                id='entry-info'
+                style={{
+                    position: 'absolute',
+                    color: 'black',
+                    boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
+                    borderRadius: '5px',
+                    padding: '0.5rem',
+                    zIndex: 2,
+                }}
+            />
+        </StyledFeedChoserWrapper >
     );
 };
 

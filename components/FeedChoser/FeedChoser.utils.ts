@@ -10,9 +10,9 @@ export const extractChips = (url: string) => {
 };
 
 export const getRandomColor = () => {
-    const hue = Math.floor(Math.random() * 10) + 210; // 210–220
-    const saturation = Math.floor(Math.random() * 10) + 45; // 45–55%
-    const lightness = Math.floor(Math.random() * 20) + 55; // 55–75%
+    const hue = Math.floor(Math.random() * 10) + 210;
+    const saturation = Math.floor(Math.random() * 10) + 45;
+    const lightness = Math.floor(Math.random() * 20) + 75;
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 
