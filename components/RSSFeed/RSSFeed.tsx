@@ -21,7 +21,6 @@ const RSSFeed = () => {
     const [showOnlyFavourite, setShowOnlyFavourite] = useState(false);
     const [detailsArticle, setDetailsArticle] = useState<FeedDTO | null>(null);
     const [searchValue, setSearchValue] = useState('');
-    console.log('🚀 ~ RSSFeed ~ searchValue:', searchValue);
 
     const feedQuery = useQuery({
         queryKey: ['FEED_SUBSCRIPTIONS', subscriptions],

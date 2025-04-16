@@ -89,6 +89,7 @@ export const ArticleSummaryWrapper = styled.div`
     
     @media (max-width: ${BREAKPOINTS.MOBILE}) {
         height: auto;
+        padding-inline: ${({ theme }) => theme.layout.paddingInline};
     }
 `;
 
