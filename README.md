@@ -20,11 +20,11 @@ Markdown parser for rendering article content
 
 ## 🚀 Demo
 Here you can find working demo:
-🔗 rssfeed-one.vercel.app
+🔗 [demo](https://rssfeed-one.vercel.app/)
 
 ## Side Notes
 Due to CORS policy, feed parsing is handled on the backend (Next.js API routes), and the frontend fetches pre-processed data. Subscriptions are managed using Tanstack Query with a refresh interval of 1 second. Articles are rendered using Markdown for better readability.
 
 ## Author
 Paweł Jakubowski
-🔗 https://www.linkedin.com/in/pawel-jakubowski-programmer/
+🔗 [LinkedIn](https://www.linkedin.com/in/pawel-jakubowski-programmer/) 
