@@ -3,11 +3,11 @@ A frontend application for reading and managing RSS feeds, built with Next.js an
 
 ## Features
   1. Add and edit RSS feeds
-  2.Subscribe to and persist added feeds
-  3.Sort articles by publication date (newest first)
-  4.Preview individual articles with a link to the original source
-  5.Add, remove, and filter favorite articles
-  6.Filter articles by title
+  2. Subscribe to and persist added feeds
+  3. Sort articles by publication date (newest first)
+  4. Preview individual articles with a link to the original source
+  5. Add, remove, and filter favorite articles
+  6. Filter articles by title
   7. Filter view to show only favorites
 
 ## Tech Stack
