@@ -18,7 +18,15 @@ export default async function getRSSFeedArticles(req: NextApiRequest, res: NextA
             )
         );
         const allItems = feeds.flatMap(feed => feed.items);
-        const sortedItems = sortFeedItems(allItems);
+        const guids = new Set();
+        const uniqueItems = allItems.filter(item => {
+            if (!item.guid || guids.has(item.guid)) {
+                return false;
+            }
+            guids.add(item.guid);
+            return true;
+        });
+        const sortedItems = sortFeedItems(uniqueItems);
 
         res.setHeader('Content-Type', 'application/xml');
         res.status(200).json(sortedItems);
