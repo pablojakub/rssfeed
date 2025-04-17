@@ -75,6 +75,9 @@ const FeedChoser = (props: FeedChoserProps) => {
             if (feedsToSaveInLocalStore.length === 0) {
                 setIsSelectAll(false);
             }
+            if (feedsToSaveInLocalStore.length === newChips.length) {
+                setIsSelectAll(true);
+            }
             return newFeeds;
         });
     };
