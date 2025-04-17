@@ -71,3 +71,13 @@ export const getDynamicChipsElements = (chipObj: ChipObj[], maxVisibleElements: 
 
     )
 }
+
+export const isCheckboxSelected = (feedElementUrl: string, subscriptions: ChipObj[], isSelectAllChecked: boolean) => {
+    if (subscriptions.some((chip) => chip.label === feedElementUrl)) {
+        return true;
+    }
+    if (feedElementUrl === SELECT_ALL_KEY && isSelectAllChecked) {
+        return true;
+    }
+    return false;
+}

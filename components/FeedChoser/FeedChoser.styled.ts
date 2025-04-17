@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { BREAKPOINTS } from "../RSSFeed/RSSFeed.styled";
 
 export const Container = styled.div`
   position: relative;
@@ -90,8 +91,8 @@ export const DropdownCheckbox = styled.input`
   cursor: pointer;
 `
 
-export const DropdownRemove = styled.span`
-  margin-left: 10px;
+export const DropdownRemove = styled.div`
+  padding-right: ${({ theme }) => theme.layout.paddingInline};
   color: black;
   cursor: pointer;
   font-weight: bold;
@@ -143,4 +144,14 @@ export const LabelWrapper = styled.div`
 export const TooltipElements = styled.div`
    display: flex;
    flex-direction: column;
-`
+`;
+
+export const EntryDescription = styled.div`
+  max-width: 300px;
+  color: black;
+  font-size: 0.9rem;
+
+  @media (max-width: ${BREAKPOINTS.MOBILE}) {
+      max-width: 150px;
+    }
+`;

@@ -1,8 +1,9 @@
 'use client'
 import React, { useState, useRef } from 'react';
-import { Chip, ChipsContainer, Container, Dropdown, DropdownCheckbox, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, ErrorLabel, Input, Label, LabelWrapper, RemoveButton, StyledFeedChoserWrapper, StyledInfoWrapper } from './FeedChoser.styled';
+import { ChipsContainer, Container, Dropdown, DropdownCheckbox, DropdownItem, DropdownLabel, DropdownRemove, DropdownText, EntryDescription, ErrorLabel, Input, Label, LabelWrapper, RemoveButton, StyledFeedChoserWrapper, StyledInfoWrapper } from './FeedChoser.styled';
 import { ChipObj, FeedChoserProps, FeedElement } from './FeedChoser.types';
-import { extractChips, getDynamicChipsElements, getRandomColor } from './FeedChoser.utils';
+import ReactDOMServer from 'react-dom/server';
+import { extractChips, getDynamicChipsElements, getRandomColor, isCheckboxSelected } from './FeedChoser.utils';
 import { getInitialValueFromLocalStore, setValueToLocalStore } from '../utils';
 import { Info } from '../Icons/Info';
 import { useDetectClickOutside } from 'react-detect-click-outside';
@@ -11,21 +12,18 @@ import { Tooltip } from 'react-tooltip';
 export const STORED_CHIPS_KEY = 'storedChips';
 export const STORED_FEEDS_KEY = 'storedFeeds';
 export const SELECT_ALL_KEY = 'Select all'
-
-const RSSFeedUrls = [
-    { url: SELECT_ALL_KEY },
-    { url: 'https://www.nasa.gov/technology/feed/' },
-    { url: 'https://techcrunch.com/feed/' },
-    { url: 'https://www.nasa.gov/aeronautics/feed/' },
-]
+export const SELECT_ALL_FEED_ELEMENT = [{ url: SELECT_ALL_KEY }];
 
 const FeedChoser = (props: FeedChoserProps) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState<string | null>(null);
     const feedsFromLocalStorage = getInitialValueFromLocalStore<FeedElement[]>(STORED_FEEDS_KEY);
-    const [feedElements, setFeedElements] = useState<FeedElement[]>([...RSSFeedUrls, ...feedsFromLocalStorage]);
+    const [feedElements, setFeedElements] = useState<FeedElement[]>([...SELECT_ALL_FEED_ELEMENT, ...feedsFromLocalStorage]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const areAllSelected = (feedElements.length - 1) === props.subscriptions.length;
+    const [isSelectAll, setIsSelectAll] = useState(areAllSelected);
     const inputRef = useRef(null);
+    const maxVisibleChipElements = 5;
 
     const handleAddUrl = (url: string) => {
         const domain = extractChips(url);
@@ -36,7 +34,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             props.onSubscriptionChange(newChips);
             setFeedElements((prev) => {
                 const newFeeds = [...prev, { url }];
-                const feedsToSaveInLocalStore = newFeeds.filter((feed) => RSSFeedUrls.includes(feed) === false);
+                const feedsToSaveInLocalStore = newFeeds.filter((feed) => feed.url !== SELECT_ALL_KEY);
                 setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, feedsToSaveInLocalStore);
                 return newFeeds;
             });
@@ -66,34 +64,54 @@ const FeedChoser = (props: FeedChoserProps) => {
         }
     };
 
+    const handleDeleteFromDropdown = (urlToRemove: string) => {
+        const newChips = props.subscriptions.filter((chip) => chip.label !== urlToRemove);
+        setValueToLocalStore(STORED_CHIPS_KEY, newChips);
+        props.onSubscriptionChange(newChips);
+        setFeedElements((prev) => {
+            const newFeeds = prev.filter((feed) => feed.url !== urlToRemove);
+            const feedsToSaveInLocalStore = newFeeds.filter((feed) => feed.url !== SELECT_ALL_KEY);
+            setValueToLocalStore(STORED_FEEDS_KEY, feedsToSaveInLocalStore);
+            if (feedsToSaveInLocalStore.length === 0) {
+                setIsSelectAll(false);
+            }
+            return newFeeds;
+        });
+    };
+
     const handleDelete = (urlToRemove: string) => {
         const newChips = props.subscriptions.filter((chip) => chip.label !== urlToRemove);
         setValueToLocalStore(STORED_CHIPS_KEY, newChips);
         props.onSubscriptionChange(newChips);
+        setIsSelectAll(false);
     };
 
     const handleAddAll = () => {
-        const newChips = feedElements.map((el) => {
-            return {
-                color: getRandomColor(),
-                label: el.url,
-            }
-        })
+        const newChips = feedElements
+            .filter((el) => el.url !== SELECT_ALL_KEY)
+            .map((el) => {
+                return {
+                    color: getRandomColor(),
+                    label: el.url,
+                }
+            })
+        setIsSelectAll(true);
         setValueToLocalStore<ChipObj[]>(STORED_CHIPS_KEY, newChips);
         props.onSubscriptionChange(newChips);
     }
 
     const handleRemoveAll = () => {
+        setIsSelectAll(false);
         setValueToLocalStore(STORED_CHIPS_KEY, []);
         props.onSubscriptionChange([]);
     }
 
     const handleToggleAddElement = (url: string) => {
-        if (url === SELECT_ALL_KEY && !props.subscriptions.find((chip) => chip.label === SELECT_ALL_KEY)) {
+        if (url === SELECT_ALL_KEY && !areAllSelected) {
             handleAddAll();
             return;
         }
-        if (url === SELECT_ALL_KEY && props.subscriptions.find((chip) => chip.label === SELECT_ALL_KEY)) {
+        if (url === SELECT_ALL_KEY && areAllSelected) {
             handleRemoveAll();
             return;
         }
@@ -101,6 +119,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             const newChips = [...props.subscriptions, { label: url, color: getRandomColor() }];
             setValueToLocalStore(STORED_CHIPS_KEY, newChips);
             props.onSubscriptionChange(newChips);
+            setIsSelectAll(newChips.length === (feedElements.length - 1));
         } else {
             handleDelete(url);
         }
@@ -117,7 +136,10 @@ const FeedChoser = (props: FeedChoserProps) => {
                         data-tooltip-place='top-start'
                         data-tooltip-variant='light'
                         data-tooltip-delay-show={400}
-                        data-tooltip-content={'Add new feed url with https:// prefix or select from sugested list'}
+                        data-tooltip-html={ReactDOMServer.renderToStaticMarkup(<EntryDescription>
+                            Here you can add and subscribe to RSS feeds. Enter url with https:// prefix. For example:
+                            https://www.nasa.gov/technology/feed/
+                        </EntryDescription>)}
                     ><Info />
                     </StyledInfoWrapper>
                 </LabelWrapper>
@@ -140,7 +162,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                         placeholder="Paste a URL and press Enter to add new RSS Feed"
                         error={error}
                     />
-                    {showDropdown && (
+                    {showDropdown && feedsFromLocalStorage.length > 0 && (
                         <Dropdown>
                             <DropdownLabel>Choose to which subscribe:</DropdownLabel>
                             {feedElements.map((feedElement, idx) => (
@@ -149,7 +171,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                                 >
                                     <DropdownCheckbox
                                         type='checkbox'
-                                        checked={props.subscriptions.some((chip) => chip.label === feedElement.url)}
+                                        checked={isCheckboxSelected(feedElement.url, props.subscriptions, isSelectAll)}
                                         onChange={(e) => {
                                             e.stopPropagation();
                                             handleToggleAddElement(feedElement.url);
@@ -161,6 +183,10 @@ const FeedChoser = (props: FeedChoserProps) => {
                                     }}>
                                         {feedElement.url}
                                     </DropdownText>
+                                    {feedElement.url !== SELECT_ALL_KEY && (
+                                        <DropdownRemove onClick={() => handleDeleteFromDropdown(feedElement.url)}>
+                                            ×
+                                        </DropdownRemove>)}
                                 </DropdownItem>
                             ))}
                         </Dropdown>
@@ -170,7 +196,7 @@ const FeedChoser = (props: FeedChoserProps) => {
             <Container>
                 <Label key='subscription_label'>Your subscriptions:</Label>
                 <ChipsContainer>
-                    {getDynamicChipsElements(props.subscriptions, 5)}
+                    {getDynamicChipsElements(props.subscriptions, maxVisibleChipElements)}
                 </ChipsContainer>
             </Container>
             <Tooltip
@@ -181,7 +207,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                     boxShadow: '0px 5px 7px 5px rgba(0,0,0,0.10)',
                     borderRadius: '5px',
                     padding: '0.5rem',
-                    zIndex: 2,
+                    zIndex: 4,
                 }}
             />
             <Tooltip
