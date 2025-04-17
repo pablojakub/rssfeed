@@ -23,7 +23,7 @@ Here you can find working demo:
 🔗 [demo](https://rssfeed-one.vercel.app/)
 
 ## Side Notes
-Due to CORS policy, feed parsing is handled on the backend (Next.js API routes), and the frontend fetches pre-processed data. Subscriptions are managed using Tanstack Query with a refresh interval of 1 second. Articles are rendered using Markdown for better readability.
+Due to CORS policy, feed parsing is handled on the backend (Next.js API routes), and the frontend fetches pre-processed data. Subscriptions are managed using Tanstack Query with a refresh interval of 1 minute. Articles are rendered using Markdown for better readability.
 
 ## Author
 Paweł Jakubowski
