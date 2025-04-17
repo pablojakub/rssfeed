@@ -148,10 +148,13 @@ export const TooltipElements = styled.div`
 
 export const EntryDescription = styled.div`
   max-width: 300px;
+  word-break: break-word;         
+  overflow-wrap: anywhere;
+  white-space: normal; 
   color: black;
   font-size: 0.9rem;
 
   @media (max-width: ${BREAKPOINTS.MOBILE}) {
-      max-width: 150px;
+      max-width: 200px;
     }
 `;
