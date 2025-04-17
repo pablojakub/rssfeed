@@ -11,12 +11,12 @@ A frontend application for reading and managing RSS feeds, built with Next.js an
   7. Filter view to show only favorites
 
 ## Tech Stack
-Next.js + React
-Tanstack Query – data fetching and subscription handling
-styled-components – component styling
-date-fns – date formatting
-lodash – utility functions
-Markdown parser for rendering article content
+* Next.js + React
+* Tanstack Query – data fetching and subscription handling
+* styled-components – component styling
+* date-fns – date formatting
+* lodash – utility functions
+* Markdown parser for rendering article content
 
 ## 🚀 Demo
 Here you can find working demo:
