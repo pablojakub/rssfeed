@@ -38,7 +38,7 @@ const FeedChoser = (props: FeedChoserProps) => {
                 setValueToLocalStore<FeedElement[]>(STORED_FEEDS_KEY, feedsToSaveInLocalStore);
                 return newFeeds;
             });
-
+            setIsSelectAll(areAllSelected);
             setInputValue('');
             return;
         }
